@@ -1,6 +1,9 @@
 import codecs
 import hashlib
 
+import requests
+from flask import *
+
 
 class Transaction:
 

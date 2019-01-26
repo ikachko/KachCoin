@@ -18,3 +18,6 @@ class PendingPool:
 
     def return_last_transactions(self, num_of_transactions=3):
         return self.transaction_pool[-num_of_transactions:]
+
+    def return_all_transactions(self):
+        return self.transaction_pool
