@@ -11,6 +11,14 @@ from tx_validator import transaction_validation
 from serializer import Serializer, Deserializer
 from blockchain import Blockchain
 from colored_print import *
+from globals import (
+    TRANSACTIONS_POOL,
+    PENDING_POOL_FILE,
+    WALLET_PRIVKEY_FILE,
+    WALLET_ADDRESS_FILE
+)
+
+# TODO: Fix wallet balance
 
 
 class WalletCli(cmd.Cmd):
@@ -19,28 +27,31 @@ class WalletCli(cmd.Cmd):
         cmd.Cmd.__init__(self)
         self.prompt = "(💰 Wallet-Cli 💰)$>"
 
-        f = Figlet(font='slant')
-        s = f.renderText('Pitcoin')
+        f = Figlet(font='big')
+        s = f.renderText('K A C H K O I N')
 
-        self.intro = s + "\n\n\n\nWelcome to Pitcoin wallet command-line interface!\n" \
+        self.intro = s + "\n\nWelcome to Kachkoin wallet command-line interface!\n" \
                          "For reference type 'help'"
         self.doc_header = "Possible commands (for reference of specific command type 'help [command]'"
 
     def do_new(self, args):
         """new [filename] - generate new private and public key\nnew [filename] [seed] - generate keys with text seed"""
-        key_gen = KeyGenerator()
+        keygen = KeyGenerator()
 
         if args:
             for arg in args:
-                key_gen.seed_input(arg)
-        private_key = key_gen.generate_key()
+                keygen.seed_input(arg)
+        private_key = keygen.generate_key()
+
+        while len(private_key) != 64:
+            private_key = KeyGenerator().generate_key()
 
         prPurple('private key:')
         prLightPurple(private_key)
         prPurple('address:')
         address = Wallet.private_key_to_addr(private_key)
         prLightPurple(address)
-        f = open('address', 'w')
+        f = open(WALLET_ADDRESS_FILE, 'w')
         f.write(address)
         f.close()
 
@@ -86,7 +97,7 @@ class WalletCli(cmd.Cmd):
         address = Wallet.private_key_to_addr(priv_key)
         prLightPurple(address)
 
-        in_file = open('address', 'w')
+        in_file = open(WALLET_ADDRESS_FILE, 'w')
         in_file.write(address)
         in_file.close()
 
@@ -104,7 +115,7 @@ class WalletCli(cmd.Cmd):
         recipient_addr = args_splitted[0]
         amount = int(args_splitted[1])
 
-        f = open('address', 'r')
+        f = open(WALLET_ADDRESS_FILE, 'r')
         sender_addr = f.read()
         f.close()
 
@@ -112,7 +123,7 @@ class WalletCli(cmd.Cmd):
 
         tx_hash = tx.transaction_hash()
 
-        f = open('privkey.wif', 'r')
+        f = open(WALLET_PRIVKEY_FILE, 'r')
         privkey_wif = f.read()
         f.close()
 
@@ -124,7 +135,7 @@ class WalletCli(cmd.Cmd):
         transaction_validation(tx_serialized, tx_hash)
         prPurple('Send from [' + sender_addr + '] to [' + recipient_addr + '] amount -> [' + str(amount) + ']')
         prLightPurple('Serialized transaction : [' + tx_serialized + ']')
-        f = open('pending_pool', 'a+')
+        f = open(TRANSACTIONS_POOL, 'a+')
         f.write(tx_serialized + '\n')
         f.close()
 
@@ -134,20 +145,23 @@ class WalletCli(cmd.Cmd):
 
         tx_payload = {'transactions': []}
         try:
-            f = open('transactions', 'r')
+            f = open(TRANSACTIONS_POOL, 'r')
+            rf = open(PENDING_POOL_FILE, 'w')
+
             while True:
                 tx = f.readline()
+                rf.write(tx)
                 if not tx:
                     break
                 tx_payload['transactions'].append(tx)
             f.close()
-
+            rf.close()
             headers = {"Content-Type": "application/json"}
             r = requests.post(url, json=tx_payload, headers=headers)
             prGreen("Transactions successfully broadcasted")
 
             # Clear transaction file
-            f = open('transactions', 'w')
+            f = open(TRANSACTIONS_POOL, 'w')
             f.write('')
             f.close()
 

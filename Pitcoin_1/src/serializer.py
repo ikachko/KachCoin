@@ -1,3 +1,5 @@
+# TODO: Byte serialization and deserialization (optional)
+
 class Serializer:
     @staticmethod
     def serialize(num_of_coins, sender_addr, recipient_addr, sender_public_key, signature):

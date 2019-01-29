@@ -11,6 +11,12 @@ from transaction import CoinbaseTransaction
 from wallet import Wallet
 from serializer import Serializer
 
+from globals import (
+    BLOCKS_DIRECTORY,
+    MINER_NODES,
+    MINER_PRIVKEY_FILE
+)
+
 
 class MinerCli(cmd.Cmd):
 
@@ -18,11 +24,10 @@ class MinerCli(cmd.Cmd):
         cmd.Cmd.__init__(self)
         self.prompt = "(⛏ ️Miner-Cli  ⛏️)$>"
 
+        f = Figlet(font='big')
+        s = f.renderText("K A C H K O I N")
 
-        f = Figlet(font='slant')
-        s = f.renderText("Pitcoin")
-
-        self.intro = s + "\n\n\n\nWelcome to Pitcoin miner command-line interface!\n" \
+        self.intro = s + "\n\nWelcome to Kachcoin miner command-line interface!\n" \
                          "For reference type 'help'"
         self.doc_header = "Possible commands (for reference of specific command type 'help [command]'"
         self.blockchain = Blockchain()
@@ -40,12 +45,12 @@ class MinerCli(cmd.Cmd):
 
     def add_new_blocks(self, n, blocks):
         for i in range(n, len(blocks)):
-            f = open('./blocks/' + ('%04x' % i) + '.block', 'w+')
+            f = open(BLOCKS_DIRECTORY + ('%08i' % i) + '.block', 'w+')
             json.dump(blocks[i].to_dict(), f)
             f.close()
 
     def do_consensus(self, args):
-        chains = self.blockchain.get_new_chains()
+        chains = Blockchain.get_new_chains()
         if chains is None:
             prRed("Failed to load chains from peers. Keeping current chain")
             return
@@ -64,7 +69,6 @@ class MinerCli(cmd.Cmd):
 
         prGreen("Consesus reached")
 
-
     def do_show_pending_pool(self, args):
         pool = Blockchain.get_pool_of_transactions()
         prCyan('---------------------')
@@ -79,7 +83,7 @@ class MinerCli(cmd.Cmd):
                 args_splitted = args.split(' ')
                 node = args_splitted[0]
                 if Blockchain.validate_node(node):
-                    f = open('./miner_data/nodes', 'a+')
+                    f = open(MINER_NODES, 'a+')
                     f.write(node + '\n')
                     f.close()
                     prGreen("Node successfully added")
@@ -88,11 +92,12 @@ class MinerCli(cmd.Cmd):
             prRed("Error while trying to add node")
 
     def do_show_nodes(self, args):
-        prLightPurple(self.nodes)
+        nodes = Blockchain.recover_nodes_from_file()
+        prLightPurple(nodes)
 
     def prepare_miner_block(self):
         transactions = Blockchain.get_transactions_to_block()
-        f = open('./miner_data/privkey.wif', 'r')
+        f = open(MINER_PRIVKEY_FILE, 'r')
         miner_privkey_wif = f.read()
         f.close()
 
@@ -112,7 +117,7 @@ class MinerCli(cmd.Cmd):
                                                    sign)
         transactions.append(serialized_coinbase)
 
-        last_block = self.chain[-1]
+        last_block = Blockchain.get_chain()[-1]
         last_block_h = last_block.hash_block()
 
         timestamp = int(time.time())

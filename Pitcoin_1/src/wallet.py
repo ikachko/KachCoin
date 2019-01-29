@@ -5,7 +5,7 @@ import binascii
 import base58
 
 from key_generator import KeyGenerator
-
+from globals import WALLET_PRIVKEY_FILE
 
 class Wallet:
     def __init__(self, seed=None, key_to_file=False):
@@ -17,8 +17,10 @@ class Wallet:
         if seed:
             keygen.seed_input(seed)
         key = keygen.generate_key()
+        while len(key) != 64:
+            key = KeyGenerator().generate_key()
         if key_to_file:
-            f = open("privkey.pem", "w+")
+            f = open(WALLET_PRIVKEY_FILE, "w+")
             f.write(key)
             f.close()
         else:
