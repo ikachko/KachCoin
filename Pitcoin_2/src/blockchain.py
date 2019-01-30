@@ -1,8 +1,7 @@
 import re
 import requests
 import json
-from flask import (Flask,
-                   request)
+
 from time import gmtime, strftime
 
 from pending_pool import PendingPool
@@ -10,68 +9,84 @@ from transaction import CoinbaseTransaction
 from block import Block
 from serializer import Serializer
 from wallet import Wallet
+from colored_print import *
 
-node = Flask(__name__)
+from globals import (
+    PENDING_POOL_FILE,
+    BLOCKS_LENGTH_FILE,
+    BLOCKS_DIRECTORY,
+    MINER_PRIVKEY_FILE,
+    MINER_NODES
+)
 
 
-BLOCKCHAIN = []
-
-
-
-NODES = []
-WAITING_TRANSACTIONS = []
-
-
-@node.route("/")
-def index():
-    return "HELLO WORLD"
+# TODO: Remove global variables and store all in files
 
 
 class Blockchain:
     def __init__(self):
         self.complexity = 2
-        self.chain = [self.genesis_block()]
-        BLOCKCHAIN.append(Blockchain.genesis_block())
+        self.chain = Blockchain.recover_blockchain_from_fileblock()
+        if not self.chain:
+            self.chain = [self.genesis_block()]
         self.nodes = Blockchain.recover_nodes_from_file()
         self.tx_pool = PendingPool()
 
     @staticmethod
+    def get_chain():
+        chain = Blockchain.recover_blockchain_from_fileblock()
+        if not chain:
+            return [Blockchain.genesis_block()]
+        return chain
+
+    @staticmethod
     def get_pool_of_transactions():
         try:
-            f = open('pending_pool', 'r')
+            f = open(PENDING_POOL_FILE, 'r')
             tx = f.readline()
             txs = []
             while True:
-                txs.append(tx)
+                txs.append(tx[:-1])
                 tx = f.readline()
                 if not tx:
                     break
             f.close()
             return txs
         except Exception as e:
-            print(e)
+            prRed(e)
 
     @staticmethod
     def get_transactions_to_block():
         try:
-            f = open('pending_pool', 'r')
+            f = open(PENDING_POOL_FILE, 'r')
             tx = f.readline()
             txs = []
             while True:
-                txs.append(tx)
+                txs.append(tx[:-1])
                 tx = f.readline()
                 if not tx:
                     break
             f.close()
             to_block = txs[:3]
-            f = open('pending_pool', 'w')
+            f = open(PENDING_POOL_FILE, 'w')
             to_write = txs[3:]
             for tx in to_write:
                 f.write(tx)
             f.close()
             return to_block
         except Exception as e:
-            print(e)
+            prRed(e)
+
+    @staticmethod
+    def recover_chain_length_from_file():
+        try:
+            f = open(BLOCKS_LENGTH_FILE, 'r')
+            length = int(f.read())
+            f.close()
+            return length
+        except Exception as e:
+            prRed(e)
+
 
     @staticmethod
     def recover_blockchain_from_fileblock():
@@ -79,7 +94,7 @@ class Blockchain:
         recovered_chain = []
         while True:
             try:
-                f = open('./blocks/' + ('%04x' % idx) + '.block', 'r')
+                f = open(BLOCKS_DIRECTORY + ('%08i' % idx) + '.block', 'r')
                 block = json.load(f)
                 block_dict = dict(block)
                 recovered_block = Block(
@@ -97,7 +112,7 @@ class Blockchain:
     def recover_nodes_from_file():
         nodes = []
         try:
-            f = open('./miner_data/nodes', 'r')
+            f = open(MINER_NODES, 'r')
             node = f.readline()[:-1]
             while node:
                 if Blockchain.validate_node(node):
@@ -105,17 +120,13 @@ class Blockchain:
                 node = f.readline()[:-1]
             return nodes
         except Exception as e:
-            print(e)
+            prRed(e)
 
     @staticmethod
     def check_hash(h, complexity):
         if h[0:complexity] == '0' * complexity:
             return True
         return False
-
-    @staticmethod
-    def get_my_blockchain():
-        return BLOCKCHAIN
 
     def mine(self, block):
         nonce = 0
@@ -126,16 +137,23 @@ class Blockchain:
             h = block.hash_block()
             if nonce % 100 == 0:
                 time_str = strftime("%Y-%m-%d %H:%M:%S", gmtime())
-                print('[' + time_str + '] nonce=' + str(block.nonce) + ', hash=' + h)
+                prCyan('[' + time_str + '] nonce=' + str(block.nonce) + ', hash=' + h)
         if self.check_hash(h, self.complexity):
             time_str = strftime("%Y-%m-%d %H:%M:%S", gmtime())
-            print('[' + time_str + '] nonce=' + str(block.nonce) + ', hash=' + h)
-            BLOCKCHAIN.append(block)
-            block_height = len(BLOCKCHAIN) - 1
-            f = open('./blocks/' + ('%04x' % block_height) + '.block', 'w+')
-            json.dump(block.to_dict(), f)
+            prGreen('[' + time_str + '] nonce=' + str(block.nonce) + ', hash=' + h)
+            self.chain.append(block)
+            block_height = len(self.chain) - 1
 
+            # Write block dict to file
+            f = open(BLOCKS_DIRECTORY + ('%08i' % block_height) + '.block', 'w+')
+            json.dump(block.to_dict(), f)
             f.close()
+
+            # Write chain length to file
+            f = open(BLOCKS_LENGTH_FILE, 'w')
+            f.write(str(block_height + 1))
+            f.close()
+
             return h, block
 
     @staticmethod
@@ -145,15 +163,14 @@ class Blockchain:
         signature = 'pmfvbjhumpsaolbumvynpcpuntpudpaozeafzljzdvyaovmkpzahujlybufvbyzpzaollhyaohukl' \
                     'clyfaopunaohapupahukdopjopztvylfvbsilhttfzvuceasar7'
 
-        f = open('./miner_data/privkey.wif', 'r')
+        f = open(MINER_PRIVKEY_FILE, 'r')
         miner_privkey_wif = f.read()
         f.close()
         miner_privkey = Wallet.WIF_to_priv(miner_privkey_wif)
         sign, publkey = Wallet.sign_message(signature, miner_privkey)
         serialized_tx = Serializer.serialize(tsx.amount, tsx.sender_address, tsx.recipient_address, publkey, signature)
-
         genesis = Block(timestamp=0, previous_hash=prev_hash, transactions=[serialized_tx, serialized_tx])
-        f = open('./blocks/0000.block', 'w')
+        f = open(BLOCKS_DIRECTORY + '00000000.block', 'w')
         json.dump(genesis.to_dict(), f)
         f.close()
         return genesis
@@ -163,16 +180,19 @@ class Blockchain:
         new_chains = []
         nodes = Blockchain.recover_nodes_from_file()
         for node in nodes:
-            raw_blocks = requests.get("http://" + node + '/chain').content
-            blocks = json.loads(raw_blocks)
-            chain = []
-            for i in range(len(blocks)):
-                new_block = Block.block_from_dict(blocks[i])
-                chain.append(new_block)
+            try:
+                raw_blocks = requests.get("http://" + node + '/chain').content
+                blocks = json.loads(raw_blocks)
+                chain = []
+                for i in range(len(blocks)):
+                    new_block = Block.block_from_dict(blocks[i])
+                    chain.append(new_block)
 
-            is_valid = Blockchain.is_valid_chain(chain)
-            if is_valid:
-                new_chains.append(chain)
+                is_valid = Blockchain.is_valid_chain(chain)
+                if is_valid:
+                    new_chains.append(chain)
+            except Exception as e:
+                prRed(e)
         return new_chains
 
     @staticmethod
@@ -212,95 +232,3 @@ class Blockchain:
             ):
                 return True
         return False
-
-    def add_node(self, new_node):
-        if Blockchain.validate_node(new_node):
-            NODES.append(new_node)
-
-            f = open('nodes', 'a+')
-            f.write(new_node + '\n')
-            f.close()
-
-            print(new_node + ' added to node pool')
-        else:
-            print("Wrong node format !")
-
-
-@node.route('/transaction/pendings', methods=['GET'])
-def get_pool_of_transaction():
-    raw_pool = Blockchain.get_pool_of_transactions()
-    json_pool = json.dumps(raw_pool)
-    return json_pool
-
-
-@node.route('/transaction/new', methods=['GET', 'POST'])
-def submit_tx():
-    if request.method == 'POST':
-        new_tx_json = request.get_json()
-        my_pool = Blockchain.get_pool_of_transactions()
-        for transaction in new_tx_json['transactions']:
-            my_pool.append(transaction[-1])
-        my_pool = list(set(my_pool))
-        f = open('pending_pool', 'w')
-        for tx in my_pool:
-            f.write(tx)
-        f.close()
-        return "Transaction added"
-    elif request.method == 'GET':
-        json_txs = json.dumps(PENDING_TRANSACTIONS)
-        return json_txs
-
-
-@node.route('/nodes/new', methods=['POST'])
-def add_node():
-    new_node = request.get_json()
-    if Blockchain.validate_node(new_node):
-        NODES.append(new_node)
-
-        f = open('nodes', 'a+')
-        f.write(new_node + '\n')
-        f.close()
-
-        print(new_node + ' added to node pool')
-    else:
-        print("Wrong node format !")
-
-
-@node.route('/nodes', methods=['GET'])
-def get_nodes():
-    raw_nodes = NODES
-    json_nodes = json.dumps(raw_nodes)
-    return json_nodes
-
-
-@node.route('/chain', methods=['GET'])
-def get_chain():
-    chain = Blockchain.recover_blockchain_from_fileblock()
-    dict_chain = []
-    for block in chain:
-        dict_chain.append(block.to_dict())
-    json_chain = json.dumps(dict_chain)
-    return json_chain
-
-
-@node.route('/chain/length', methods=['GET'])
-def get_chain_length():
-    chain_len = len(BLOCKCHAIN)
-    json_length = json.dumps(chain_len)
-    return json_length
-
-
-def get_miner_ip_and_port():
-    try:
-        f = open('./miner_data/network_data')
-        json_data = json.load(f)
-        read_ip = json_data["ip"]
-        read_port = json_data["port"]
-        return read_ip, read_port
-    except Exception as e:
-        print(e)
-
-
-if __name__ == "__main__":
-    ip, port = get_miner_ip_and_port()
-    node.run(host=ip, port=port, debug=True)
