@@ -26,7 +26,15 @@ commands_tokens = [
     OP_EQUALVERIFY
 ]
 
-ops = [0] * 256
+str_tokens = {
+    OP_CHECKSIG: "OP_CHECKSIG",
+    OP_DUP: "OP_DUP",
+    OP_EQUAL: "OP_EQUAL",
+    OP_EQUALVERIFY: "OP_EQUALVERIFY",
+    OP_HASH160: "OP_HASH160",
+    OP_HASH256: "OP_HASH256"
+}
+
 
 def op_equal(stack):
     try:
@@ -121,6 +129,18 @@ def op_equalverify(stack):
     except Exception as e:
         prRed("op_equalverify :")
         prRed(e)
+
+
+tokens_functors = {
+    OP_CHECKSIG: op_chechsig,
+    OP_DUP: op_dup,
+    OP_EQUAL: op_equal,
+    OP_EQUALVERIFY: op_equalverify,
+    OP_HASH160: op_hash160,
+    OP_HASH256: op_hash256
+}
+
+
 # ops[OP_EQUAL] = op_equal
 # ops[OP_DUP] = op_dup
 # ops[OP_HASH256] = op_hash256
@@ -130,8 +150,6 @@ def op_equalverify(stack):
 
 scriptPubKey = hex(OP_HASH256) + " 6fe28c0ab6f1b372c1a6a246ae63f74f931e8365e15a089c68d6190000000000 " + hex(OP_EQUAL)
 scriptSig = 'a4bfa8ab6435ae5f25dae9d89e4eb67dfa94283ca751f393c1ddc5a837bbc31b'
-
-print(scriptPubKey)
 
 def lexer(script):
     stack = []
@@ -147,34 +165,12 @@ pub_key_commands = lexer(scriptPubKey)
 sig_commands = lexer(scriptSig)
 commands = sig_commands + pub_key_commands
 
-tokens_functors = {
-    OP_CHECKSIG: op_chechsig,
-    OP_DUP: op_dup,
-    OP_EQUAL: op_equal,
-    OP_EQUALVERIFY: op_equalverify,
-    OP_HASH160: op_hash160,
-    OP_HASH256: op_hash256
-}
-
-str_tokens = {
-    OP_CHECKSIG: "OP_CHECKSIG",
-    OP_DUP: "OP_DUP",
-    OP_EQUAL: "OP_EQUAL",
-    OP_EQUALVERIFY: "OP_EQUALVERIFY",
-    OP_HASH160: "OP_HASH160",
-    OP_HASH256: "OP_HASH256"
-}
-
 def execute_stack(commands):
     stack = []
     i = 0
     for command in commands:
-        prPurple(i)
-        prCyan(stack)
-        # prCyan(type(stack))
         if int(command, 16) in commands_tokens:
             op_code = int(command, 16)
-            prLightPurple(str_tokens[op_code])
             stack = tokens_functors[op_code](stack)
             if not stack:
                 prRed("Transaction is invalid. Token " + str_tokens[op_code] + " returned FALSE")
@@ -183,6 +179,7 @@ def execute_stack(commands):
             stack.append(command)
         i += 1
     return stack
+
 
 prkey = '40a5911c18651321e23d845287d084e76d99d53ffc0ca86ef1a0ac711efd05f5'
 pubkey = '046b8fd99422ec9915b20e8481b58fbba527f8dd2e15725025a8b7545773d8d433b73e572c8bc740ca5185fb92e88404aca9c884de96614be75e06b336693870e3'
