@@ -85,6 +85,31 @@ def get_chain_length():
     return json_length
 
 
+@node.route('/block/', methods=['GET'])
+def get_n_block():
+    height = int(request.args.get('height'))
+    if height:
+        block = Blockchain.get_n_block(height)
+    else:
+        block = Blockchain.get_n_block(last=True)
+    json_block = json.dumps(block.to_dict())
+    return json_block
+
+
+@node.route('/block/last', methods=['GET'])
+def get_last_block():
+    block = Blockchain.get_n_block(last=True)
+    json_block = json.dumps(block.to_dict())
+    return json_block
+
+
+@node.route('/balance', methods=['GET'])
+def get_balance():
+    addr = request.args.get('address')
+    im_sorry = "500"
+    return im_sorry
+
+
 def get_miner_ip_and_port():
     try:
         f = open(MINER_NETWORK_DATA)

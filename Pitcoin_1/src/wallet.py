@@ -6,7 +6,7 @@ import base58
 
 from key_generator import KeyGenerator
 from globals import WALLET_PRIVKEY_FILE
-
+from colored_print import prRed
 class Wallet:
     def __init__(self, seed=None, key_to_file=False):
         self.__create_priv_key(seed, key_to_file)
@@ -108,6 +108,16 @@ class Wallet:
             return None
         private_key = versioned_key[2:]
         return private_key
+
+    @staticmethod
+    def publkey_hash_from_addr(address):
+        publkey_hash = None
+        try:
+            publkey_hash = base58.b58decode_check(address)[1:].hex()
+        except Exception as e:
+            prRed("publkey_hash_from_addr:")
+            prRed(e)
+        return publkey_hash
 
     @staticmethod
     def sign_message(message, private_key):

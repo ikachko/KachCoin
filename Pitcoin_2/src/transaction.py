@@ -1,5 +1,22 @@
 import codecs
 import hashlib
+from colored_print import *
+
+# TODO : Rewrite Transaction class for new raw bitcoin transaction form
+
+
+class Input:
+    def __init__(self, prev_output, prev_output_idx, sign_script, sequence):
+        self.prev_output_hash = self.__reverse_hash(prev_output)
+        self.prev_output_idx = prev_output_idx
+        self.script_length = len(sign_script)
+        self.sign_script = sign_script
+        self.sequence = sequence
+
+    def __reverse_hash(self, prev_output):
+        output_hash_bytes = codecs.decode(prev_output, 'hex')
+        output_hash = hashlib.sha256(hashlib.sha256(output_hash_bytes).digest()).hexdigest()
+        return output_hash[::-1]
 
 
 class Transaction:

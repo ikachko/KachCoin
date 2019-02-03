@@ -4,6 +4,8 @@ import ecdsa
 
 from wallet import Wallet
 from colored_print import *
+from serializer import get_varint
+
 # TODO : Implement script.py
 
 # P2PKH COMMANDS
@@ -16,6 +18,8 @@ OP_VERIFY = 0x69        # Marks transaction as invalid if top stack value is not
 OP_EQUAL = 0x87         # [TEST] lambda x y = (x == y)
 OP_EQUALVERIFY = 0x88   # Run OP_EQUAL and then OP_VERIFY
 
+OP_PUSHDATA = [i for i in range(1, 75)]
+
 commands_tokens = [
     OP_DUP,
     OP_HASH256,
@@ -26,7 +30,7 @@ commands_tokens = [
     OP_EQUALVERIFY
 ]
 
-str_tokens = {
+hex_str_tokens = {
     OP_CHECKSIG: "OP_CHECKSIG",
     OP_DUP: "OP_DUP",
     OP_EQUAL: "OP_EQUAL",
@@ -35,6 +39,14 @@ str_tokens = {
     OP_HASH256: "OP_HASH256"
 }
 
+str_tokens = {
+    OP_CHECKSIG: "ac",
+    OP_DUP: "76",
+    OP_EQUAL: "87",
+    OP_EQUALVERIFY: "88",
+    OP_HASH160: "a9",
+    OP_HASH256: "aa"
+}
 
 def op_equal(stack):
     try:
@@ -152,18 +164,33 @@ scriptPubKey = hex(OP_HASH256) + " 6fe28c0ab6f1b372c1a6a246ae63f74f931e8365e15a0
 scriptSig = 'a4bfa8ab6435ae5f25dae9d89e4eb67dfa94283ca751f393c1ddc5a837bbc31b'
 
 def lexer(script):
-    stack = []
+    commands_list = []
+    prRed(script)
+    i = 0
+    while i < len(script):
+        plus_i = 2
+        ch = script[i:i + 2]
+        # prGreen(commands_list)
+        # prGreen(int(ch, 16))
+        prRed(ch)
+        if int(ch, 16) in commands_tokens:
+            prRed("COMMAND " + str_tokens[int(ch, 16)])
+            commands_list.append(ch)
+        else:
+            plus_i, varint = get_varint(script[i:])
+            slice = script[i + 2:i + 2 + varint]
+            prYellow("SLICE " + slice)
+            prGreen("PLUS I " + str(plus_i))
+            if slice:
+                commands_list.append(slice)
+            plus_i += varint
+        i += plus_i
+    return commands_list
 
-    splitted = script.split(' ')
 
-    for word in splitted:
-        stack.append(word)
-    return stack
-
-
-pub_key_commands = lexer(scriptPubKey)
-sig_commands = lexer(scriptSig)
-commands = sig_commands + pub_key_commands
+# pub_key_commands = lexer(scriptPubKey)
+# sig_commands = lexer(scriptSig)
+# commands = sig_commands + pub_key_commands
 
 def execute_stack(commands):
     stack = []
@@ -196,6 +223,10 @@ scriptSigList = [message, sig, public_key]
 scriptList = scriptSigList + scriptPubKeyList
 script = ' '.join(scriptList)
 
-stack = lexer(script)
-res = execute_stack(stack)
-print(res)
+# stack = lexer(script)
+# res = execute_stack(stack)
+# print(res)
+
+script_str = '9a01fd3046022100b408d547ffe841d869e8287414930600ce43bc68827b41c703a36539772ad53b0221008e5bb700fa4163cbb11af95c6b9dc50a8c8f6a1dd700dba2ac296645cf9dc932303182303466386132353665323631383664653561626634373337356437333730333466303034376166653530393330623532306466363831636636323061366238616464366531343131366139333333656266633639353734376561666534396637373732306533623335643031336639336430636139346236653166363134666263313276a914e6cb7a9ee8ced98297292b40aadadc964ad1e60688ac'
+script_list = lexer(script_str)
+print(script_list)

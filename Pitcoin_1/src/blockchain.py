@@ -128,6 +128,40 @@ class Blockchain:
             return True
         return False
 
+    @staticmethod
+    def get_n_block(height=0, last=False):
+        i = 0
+        b_f = None
+        if last:
+            while True:
+                try:
+                    b_f = open(BLOCKS_DIRECTORY + ('%08i' % i) + '.block', 'r')
+                    i += 1
+                except FileNotFoundError:
+                    break
+        else:
+            while i <= height:
+                try:
+                    b_f = open(BLOCKS_DIRECTORY + ('%08i' % i) + '.block', 'r')
+                    i += 1
+                except FileNotFoundError:
+                    break
+        if not b_f:
+            prRed("No blocks were found")
+            return
+        try:
+            if b_f.readable():
+                block = json.load(b_f)
+                block_dict = dict(block)
+                last_block = Block(
+                    timestamp=block_dict['timestamp'],
+                    previous_hash=block_dict['previous_hash'],
+                    transactions=list(block_dict['transactions']),
+                    nonce=block_dict['nonce'])
+                return last_block
+        except Exception as e:
+            prRed(e)
+
     def mine(self, block):
         nonce = 0
         h = block.hash_block()

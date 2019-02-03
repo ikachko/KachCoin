@@ -1,4 +1,5 @@
 # TODO: Byte serialization and deserialization (optional)
+from colored_print import *
 
 class Serializer:
     @staticmethod
@@ -52,8 +53,6 @@ def get_varint(str):
     else:
         return 2, int((str[0:2]), 16)
     swapped_str = swap_bits_in_str(str[2:length])
-    print(swapped_str)
-
     # print(str)
     # print(length)
     # print((str[2:length]))
@@ -77,11 +76,6 @@ num_fe = 998000
 varint = make_varint(num)
 varint_fd = make_varint(num_fd)
 varint_fe = make_varint(num_fe)
-
-print(varint)
-print(varint_fd)
-print(varint_fe)
-
 
 def serialize(version, inputs, outputs, locktime):
     serialized_tx = ''
@@ -203,4 +197,4 @@ def deserialize(serialized_tx):
 
 
 tx_dict = deserialize(transaction)
-print(tx_dict)
+# print(tx_dict)

@@ -115,8 +115,11 @@ class MinerCli(cmd.Cmd):
                                                    coinbase.recipient_address,
                                                    publkey,
                                                    sign)
-        transactions.append(serialized_coinbase)
-
+        if transactions[0] == '':
+            transactions = [serialized_coinbase]
+        else:
+            transactions.append(serialized_coinbase)
+        prGreen(transactions)
         last_block = Blockchain.get_chain()[-1]
         last_block_h = last_block.hash_block()
 
