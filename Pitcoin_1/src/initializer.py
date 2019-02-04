@@ -121,6 +121,14 @@ def get_miner_ip_and_port():
         print(e)
 
 
+def main():
+    ip, port = get_miner_ip_and_port()
+    if not ip or not port:
+        prRed("INVALID ./miner_data/network_data")
+    else:
+        node.run(host=ip, port=port, debug=True)
+
+
 if __name__ == "__main__":
     ip, port = get_miner_ip_and_port()
     if not ip or not port:
