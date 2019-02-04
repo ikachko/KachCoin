@@ -7,6 +7,7 @@ from pyfiglet import Figlet
 from key_generator import KeyGenerator
 from wallet import Wallet
 from transaction import Transaction
+# from tx import RawTransaction
 from tx_validator import transaction_validation
 from serializer import Serializer, Deserializer
 from blockchain import Blockchain
@@ -76,7 +77,7 @@ class WalletCli(cmd.Cmd):
             prPurple("Balance of address " + address + " is " + str(balance) + " coins")
 
     def do_import(self, args):
-        """import [out_filename] [to_filename] - import private key in WIF format
+        """import [out_filename] - import private key in WIF format
                                             and convert it to private and public"""
         if not args or len(args.split(' ')) != 1:
             prRed(
@@ -86,7 +87,7 @@ class WalletCli(cmd.Cmd):
             return
         args_splitted = args.split(' ')
 
-        out_file = open(args_splitted, 'r')
+        out_file = open(args_splitted[0], 'r')
         wif_key = out_file.read()
         out_file.close()
 
@@ -100,6 +101,44 @@ class WalletCli(cmd.Cmd):
         in_file = open(WALLET_ADDRESS_FILE, 'w')
         in_file.write(address)
         in_file.close()
+
+    # def do_send_raw(self, args):
+    #     """send [Recipient Address] [Amount]"""
+    #
+    #     if not args or len(args.split(' ')) != 2:
+    #         prRed(
+    #             'usage:\n'
+    #             'send [Recepient Address] [Amount]'
+    #         )
+    #         return
+    #     args_splitted = args.split(' ')
+    #     recipient_addr = args_splitted[0]
+    #     amount = int(args_splitted[1])
+    #
+    #     f = open(WALLET_ADDRESS_FILE, 'r')
+    #     sender_addr = f.read()
+    #     f.close()
+    #
+    #     f = open(WALLET_PRIVKEY_FILE, 'r')
+    #     privkey_wif = f.read()
+    #     f.close()
+    #
+    #     privkey = Wallet.WIF_to_priv(privkey_wif)
+    #
+    #     tx = RawTransaction(sender_addr, recipient_addr, amount, amount, 0)
+    #     tx_hash = tx.tx_id(privkey)
+    #
+    #     # sign, publkey = tx.sign_transaction(privkey)
+    #
+    #     tx_serialized = tx.raw_transaction(privkey).hex()
+    #
+    #     # tx_serialized = Serializer.serialize(tx.amount, tx.sender_address, tx.recipient_address, publkey, sign)
+    #     # transaction_validation(tx_serialized, tx_hash)
+    #     prPurple('Send from [' + sender_addr + '] to [' + recipient_addr + '] amount -> [' + str(amount) + ']')
+    #     prLightPurple('Serialized transaction : [' + tx_serialized + ']')
+    #     f = open(TRANSACTIONS_POOL, 'a+')
+    #     f.write(tx_serialized + '\n')
+    #     f.close()
 
     def do_send(self, args):
         """send [Recipient Address] [Amount]"""

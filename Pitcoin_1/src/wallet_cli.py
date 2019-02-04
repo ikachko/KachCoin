@@ -77,7 +77,7 @@ class WalletCli(cmd.Cmd):
             prPurple("Balance of address " + address + " is " + str(balance) + " coins")
 
     def do_import(self, args):
-        """import [out_filename] [to_filename] - import private key in WIF format
+        """import [out_filename] - import private key in WIF format
                                             and convert it to private and public"""
         if not args or len(args.split(' ')) != 1:
             prRed(
@@ -87,7 +87,7 @@ class WalletCli(cmd.Cmd):
             return
         args_splitted = args.split(' ')
 
-        out_file = open(args_splitted, 'r')
+        out_file = open(args_splitted[0], 'r')
         wif_key = out_file.read()
         out_file.close()
 

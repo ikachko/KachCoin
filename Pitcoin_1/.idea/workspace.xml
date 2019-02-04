@@ -3,41 +3,13 @@
   <component name="ChangeListManager">
     <list default="true" id="fa56a6c6-bffa-4846-9d0d-eb441aae36d7" name="Default Changelist" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/nodes" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/colored_print.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/colored_print.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/script.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/script.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/transaction.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/transaction.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/address" beforeDir="false" afterPath="$PROJECT_DIR$/address" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/pending_pool" beforeDir="false" afterPath="$PROJECT_DIR$/pending_pool" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/miner_cli.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/miner_cli.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/wallet_cli.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/wallet_cli.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/transactions" beforeDir="false" afterPath="$PROJECT_DIR$/transactions" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../Pitcoin_2/address" beforeDir="false" afterPath="$PROJECT_DIR$/../Pitcoin_2/address" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../Pitcoin_2/block.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../Pitcoin_2/blockchain.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../Pitcoin_2/blocks/0000.block" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../Pitcoin_2/blocks/0001.block" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../Pitcoin_2/blocks/0002.block" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../Pitcoin_2/blocks/0003.block" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../Pitcoin_2/blocks/0004.block" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../Pitcoin_2/blocks/0005.block" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../Pitcoin_2/blocks/0006.block" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../Pitcoin_2/colored_print.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../Pitcoin_2/curve.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../Pitcoin_2/flask_test.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../Pitcoin_2/k.publickey" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../Pitcoin_2/key_generator.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../Pitcoin_2/m.publickey" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../Pitcoin_2/merkle.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../Pitcoin_2/miner_cli.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../Pitcoin_2/miner_data/nodes" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../Pitcoin_2/miner_data/privkey.wif" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../Pitcoin_2/nodes" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../Pitcoin_2/p.publickey" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../Pitcoin_2/pending_pool.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../Pitcoin_2/publ_from_wif" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../Pitcoin_2/serializer.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../Pitcoin_2/server.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../Pitcoin_2/test.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../Pitcoin_2/transaction.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../Pitcoin_2/tx_validator.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../Pitcoin_2/wallet.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../Pitcoin_2/wallet_cli.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../Pitcoin_2/src/wallet_cli.py" beforeDir="false" afterPath="$PROJECT_DIR$/../Pitcoin_2/src/wallet_cli.py" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
@@ -49,26 +21,14 @@
     <SUITE FILE_PATH="coverage/Pitcoin_1$Pitcoin_1.coverage" NAME="Pitcoin_1 Coverage Results" MODIFIED="1548765584630" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
   </component>
   <component name="FileEditorManager">
-    <splitter split-orientation="horizontal" split-proportion="0.5902004">
+    <splitter split-orientation="horizontal" split-proportion="0.3905192">
       <split-first>
         <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
           <file pinned="false" current-in-tab="false">
-            <entry file="file://$PROJECT_DIR$/src/kachkoin_tests.py">
-              <provider selected="true" editor-type-id="text-editor">
-                <state relative-caret-position="270">
-                  <caret line="37" selection-start-line="37" selection-end-line="37" />
-                  <folding>
-                    <element signature="e#0#23#0" expanded="true" />
-                  </folding>
-                </state>
-              </provider>
-            </entry>
-          </file>
-          <file pinned="false" current-in-tab="true">
             <entry file="file://$PROJECT_DIR$/src/transaction.py">
               <provider selected="true" editor-type-id="text-editor">
-                <state relative-caret-position="390">
-                  <caret line="26" selection-start-line="26" selection-end-line="26" />
+                <state relative-caret-position="405">
+                  <caret line="29" column="21" selection-start-line="29" selection-start-column="21" selection-end-line="29" selection-end-column="21" />
                   <folding>
                     <element signature="e#0#13#0" expanded="true" />
                   </folding>
@@ -77,22 +37,10 @@
             </entry>
           </file>
           <file pinned="false" current-in-tab="false">
-            <entry file="file://$PROJECT_DIR$/src/blockchain.py">
-              <provider selected="true" editor-type-id="text-editor">
-                <state relative-caret-position="285">
-                  <caret line="38" column="29" selection-start-line="38" selection-start-column="29" selection-end-line="38" selection-end-column="29" />
-                  <folding>
-                    <element signature="e#0#9#0" expanded="true" />
-                  </folding>
-                </state>
-              </provider>
-            </entry>
-          </file>
-          <file pinned="false" current-in-tab="false">
             <entry file="file://$PROJECT_DIR$/src/initializer.py">
               <provider selected="true" editor-type-id="text-editor">
-                <state relative-caret-position="255">
-                  <caret line="29" column="20" selection-start-line="29" selection-start-column="20" selection-end-line="29" selection-end-column="20" />
+                <state relative-caret-position="1072">
+                  <caret line="122" selection-start-line="122" selection-end-line="122" />
                   <folding>
                     <element signature="e#0#11#0" expanded="true" />
                   </folding>
@@ -101,24 +49,25 @@
             </entry>
           </file>
           <file pinned="false" current-in-tab="false">
-            <entry file="file://$PROJECT_DIR$/src/server.py">
-              <provider selected="true" editor-type-id="text-editor" />
-            </entry>
-          </file>
-          <file pinned="false" current-in-tab="false">
-            <entry file="file://$PROJECT_DIR$/src/colored_print.py">
+            <entry file="file://$PROJECT_DIR$/src/tx.py">
               <provider selected="true" editor-type-id="text-editor">
-                <state relative-caret-position="195">
-                  <caret line="13" selection-start-line="13" selection-end-line="13" />
+                <state relative-caret-position="525">
+                  <caret line="43" column="32" selection-start-line="43" selection-start-column="32" selection-end-line="43" selection-end-column="32" />
+                  <folding>
+                    <element signature="e#0#13#0" expanded="true" />
+                  </folding>
                 </state>
               </provider>
             </entry>
           </file>
-          <file pinned="false" current-in-tab="false">
-            <entry file="file://$PROJECT_DIR$/src/globals.py">
+          <file pinned="false" current-in-tab="true">
+            <entry file="file://$PROJECT_DIR$/src/miner_cli.py">
               <provider selected="true" editor-type-id="text-editor">
-                <state relative-caret-position="150">
-                  <caret line="10" column="48" selection-start-line="10" selection-start-column="48" selection-end-line="10" selection-end-column="48" />
+                <state relative-caret-position="424">
+                  <caret line="129" selection-start-line="129" selection-end-line="129" />
+                  <folding>
+                    <element signature="e#0#10#0" expanded="true" />
+                  </folding>
                 </state>
               </provider>
             </entry>
@@ -126,8 +75,8 @@
           <file pinned="false" current-in-tab="false">
             <entry file="file://$PROJECT_DIR$/src/wallet_cli.py">
               <provider selected="true" editor-type-id="text-editor">
-                <state relative-caret-position="1950">
-                  <caret line="148" column="28" selection-start-line="148" selection-start-column="22" selection-end-line="148" selection-end-column="39" />
+                <state relative-caret-position="-283">
+                  <caret line="89" column="39" selection-start-line="89" selection-start-column="39" selection-end-line="89" selection-end-column="39" />
                   <folding>
                     <element signature="e#0#10#0" expanded="true" />
                   </folding>
@@ -138,20 +87,8 @@
           <file pinned="false" current-in-tab="false">
             <entry file="file://$PROJECT_DIR$/src/script.py">
               <provider selected="true" editor-type-id="text-editor">
-                <state relative-caret-position="2580">
-                  <caret line="172" column="38" lean-forward="true" selection-start-line="172" selection-start-column="38" selection-end-line="172" selection-end-column="38" />
-                  <folding>
-                    <element signature="e#0#14#0" expanded="true" />
-                  </folding>
-                </state>
-              </provider>
-            </entry>
-          </file>
-          <file pinned="false" current-in-tab="false">
-            <entry file="file://$PROJECT_DIR$/src/wallet.py">
-              <provider selected="true" editor-type-id="text-editor">
-                <state relative-caret-position="332">
-                  <caret line="23" column="20" selection-start-line="23" selection-start-column="20" selection-end-line="23" selection-end-column="20" />
+                <state relative-caret-position="2520">
+                  <caret line="174" column="17" selection-start-line="174" selection-start-column="17" selection-end-line="174" selection-end-column="17" />
                   <folding>
                     <element signature="e#0#14#0" expanded="true" />
                   </folding>
@@ -164,75 +101,85 @@
       <split-second>
         <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
           <file pinned="false" current-in-tab="false">
-            <entry file="file://$PROJECT_DIR$/src/blockchain.py">
+            <entry file="file://$PROJECT_DIR$/src/wallet.py">
               <provider selected="true" editor-type-id="text-editor">
-                <state relative-caret-position="300">
-                  <caret line="154" selection-start-line="154" selection-end-line="155" />
+                <state relative-caret-position="722">
+                  <caret line="117" column="42" selection-start-line="117" selection-start-column="42" selection-end-line="117" selection-end-column="42" />
                   <folding>
-                    <element signature="e#0#9#0" expanded="true" />
+                    <element signature="e#0#14#0" expanded="true" />
                   </folding>
                 </state>
               </provider>
             </entry>
           </file>
           <file pinned="false" current-in-tab="false">
-            <entry file="file://$PROJECT_DIR$/src/block.py">
+            <entry file="file://$PROJECT_DIR$/src/premine.py">
               <provider selected="true" editor-type-id="text-editor">
-                <state relative-caret-position="45">
-                  <caret line="3" column="47" selection-start-line="3" selection-start-column="47" selection-end-line="3" selection-end-column="47" />
+                <state relative-caret-position="748">
+                  <caret line="50" column="71" selection-start-line="50" selection-start-column="71" selection-end-line="50" selection-end-column="71" />
+                  <folding>
+                    <element signature="e#0#18#0" expanded="true" />
+                  </folding>
                 </state>
               </provider>
             </entry>
           </file>
           <file pinned="false" current-in-tab="false">
-            <entry file="file://$PROJECT_DIR$/src/utxo_set.py">
+            <entry file="file://$PROJECT_DIR$/blocks/length">
+              <provider selected="true" editor-type-id="text-editor" />
+            </entry>
+          </file>
+          <file pinned="false" current-in-tab="false">
+            <entry file="file://$PROJECT_DIR$/src/test.py">
               <provider selected="true" editor-type-id="text-editor">
-                <state relative-caret-position="15">
-                  <caret line="1" selection-start-line="1" selection-end-line="1" />
+                <state relative-caret-position="135">
+                  <caret line="26" column="22" selection-start-line="26" selection-start-column="22" selection-end-line="26" selection-end-column="22" />
+                  <folding>
+                    <element signature="e#0#15#0" expanded="true" />
+                  </folding>
                 </state>
               </provider>
             </entry>
           </file>
           <file pinned="false" current-in-tab="true">
-            <entry file="file://$PROJECT_DIR$/src/wallet.py">
+            <entry file="file://$PROJECT_DIR$/src/kachkoin_tests.py">
               <provider selected="true" editor-type-id="text-editor">
-                <state relative-caret-position="448">
-                  <caret line="80" column="30" selection-start-line="80" selection-start-column="30" selection-end-line="80" selection-end-column="30" />
+                <state relative-caret-position="314">
+                  <caret line="51" column="41" selection-start-line="51" selection-start-column="41" selection-end-line="51" selection-end-column="41" />
                   <folding>
-                    <element signature="e#0#14#0" expanded="true" />
+                    <element signature="e#0#23#0" expanded="true" />
                   </folding>
                 </state>
               </provider>
             </entry>
           </file>
           <file pinned="false" current-in-tab="false">
-            <entry file="file://$PROJECT_DIR$/src/test_to_delete.ipynb">
-              <provider selected="true" editor-type-id="ipnb-editor">
-                <state>
-                  <selected id="7" />
-                </state>
-              </provider>
+            <entry file="file://$PROJECT_DIR$/miner_data/privkey_1">
+              <provider selected="true" editor-type-id="text-editor" />
+            </entry>
+          </file>
+          <file pinned="false" current-in-tab="false">
+            <entry file="file://$PROJECT_DIR$/miner_data/privkey_2">
+              <provider selected="true" editor-type-id="text-editor" />
+            </entry>
+          </file>
+          <file pinned="false" current-in-tab="false">
+            <entry file="file://$PROJECT_DIR$/miner_data/privkey_3">
+              <provider selected="true" editor-type-id="text-editor" />
+            </entry>
+          </file>
+          <file pinned="false" current-in-tab="false">
+            <entry file="file://$PROJECT_DIR$/miner_data/publkey_1">
+              <provider selected="true" editor-type-id="text-editor" />
             </entry>
           </file>
           <file pinned="false" current-in-tab="false">
             <entry file="file://$PROJECT_DIR$/src/initializer.py">
               <provider selected="true" editor-type-id="text-editor">
-                <state relative-caret-position="435">
-                  <caret line="29" column="20" selection-start-line="29" selection-start-column="20" selection-end-line="29" selection-end-column="20" />
+                <state relative-caret-position="1065">
+                  <caret line="71" column="16" selection-start-line="71" selection-start-column="16" selection-end-line="71" selection-end-column="16" />
                   <folding>
                     <element signature="e#0#11#0" expanded="true" />
-                  </folding>
-                </state>
-              </provider>
-            </entry>
-          </file>
-          <file pinned="false" current-in-tab="false">
-            <entry file="file://$PROJECT_DIR$/src/script.py">
-              <provider selected="true" editor-type-id="text-editor">
-                <state relative-caret-position="481">
-                  <caret line="161" lean-forward="true" selection-start-line="161" selection-end-line="161" />
-                  <folding>
-                    <element signature="e#0#14#0" expanded="true" />
                   </folding>
                 </state>
               </provider>
@@ -249,34 +196,42 @@
       </list>
     </option>
   </component>
+  <component name="FindInProjectRecents">
+    <findStrings>
+      <find>output</find>
+      <find>print</find>
+      <find>self.blockchain</find>
+    </findStrings>
+  </component>
   <component name="Git.Settings">
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$/.." />
   </component>
   <component name="IdeDocumentHistory">
     <option name="CHANGED_PATHS">
       <list>
-        <option value="$PROJECT_DIR$/src/serializer.py" />
-        <option value="$PROJECT_DIR$/src/miner_cli.py" />
         <option value="$PROJECT_DIR$/initializer.py" />
         <option value="$PROJECT_DIR$/src/globals.py" />
-        <option value="$PROJECT_DIR$/src/initializer.py" />
-        <option value="$PROJECT_DIR$/src/wallet_cli.py" />
-        <option value="$PROJECT_DIR$/src/blockchain.py" />
-        <option value="$PROJECT_DIR$/src/kachkoin_tests.py" />
         <option value="$PROJECT_DIR$/src/colored_print.py" />
         <option value="$PROJECT_DIR$/src/utxo_set.py" />
         <option value="$PROJECT_DIR$/src/test_to_delete.ipynb" />
-        <option value="$PROJECT_DIR$/src/wallet.py" />
-        <option value="$PROJECT_DIR$/src/script.py" />
+        <option value="$PROJECT_DIR$/src/blockchain.py" />
+        <option value="$PROJECT_DIR$/src/kachkoin_tests.py" />
         <option value="$PROJECT_DIR$/src/transaction.py" />
+        <option value="$PROJECT_DIR$/src/test.py" />
+        <option value="$PROJECT_DIR$/src/serializer.py" />
+        <option value="$PROJECT_DIR$/src/script.py" />
+        <option value="$PROJECT_DIR$/src/tx.py" />
+        <option value="$PROJECT_DIR$/src/wallet.py" />
+        <option value="$PROJECT_DIR$/src/initializer.py" />
+        <option value="$PROJECT_DIR$/src/premine.py" />
+        <option value="$PROJECT_DIR$/src/wallet_cli.py" />
+        <option value="$PROJECT_DIR$/src/miner_cli.py" />
       </list>
     </option>
   </component>
-  <component name="ProjectFrameBounds">
-    <option name="x" value="850" />
-    <option name="y" value="33" />
-    <option name="width" value="1610" />
-    <option name="height" value="1337" />
+  <component name="ProjectFrameBounds" fullScreen="true">
+    <option name="width" value="2560" />
+    <option name="height" value="1440" />
   </component>
   <component name="ProjectLevelVcsManager" settingsEditedManually="true" />
   <component name="ProjectView">
@@ -290,6 +245,11 @@
             <path>
               <item name="Pitcoin_1" type="b2602c69:ProjectViewProjectNode" />
               <item name="Pitcoin_1" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="Pitcoin_1" type="b2602c69:ProjectViewProjectNode" />
+              <item name="Pitcoin_1" type="462c0819:PsiDirectoryNode" />
+              <item name="blocks" type="462c0819:PsiDirectoryNode" />
             </path>
             <path>
               <item name="Pitcoin_1" type="b2602c69:ProjectViewProjectNode" />
@@ -365,12 +325,16 @@
       <workItem from="1548759083824" duration="233000" />
       <workItem from="1548759322764" duration="1597000" />
       <workItem from="1548761084721" duration="7592000" />
-      <workItem from="1548842051380" duration="14277000" />
+      <workItem from="1548842051380" duration="14647000" />
+      <workItem from="1548930276847" duration="6615000" />
+      <workItem from="1548948903848" duration="3267000" />
+      <workItem from="1549197211046" duration="22063000" />
+      <workItem from="1549260481234" duration="1477000" />
     </task>
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="23753000" />
+    <option name="totallyTimeSpent" value="57545000" />
   </component>
   <component name="TodoView">
     <todo-panel id="selected-file">
@@ -382,9 +346,10 @@
     </todo-panel>
   </component>
   <component name="ToolWindowManager">
-    <frame x="850" y="33" width="1610" height="1337" extended-state="0" />
+    <frame x="0" y="0" width="2560" height="1440" extended-state="0" />
+    <editor active="true" />
     <layout>
-      <window_info content_ui="combo" id="Project" order="0" visible="true" weight="0.20089285" />
+      <window_info content_ui="combo" id="Project" order="0" visible="true" weight="0.18546465" />
       <window_info id="Structure" order="1" side_tool="true" weight="0.25" />
       <window_info id="Favorites" order="2" side_tool="true" />
       <window_info anchor="bottom" id="Message" order="0" />
@@ -398,7 +363,7 @@
       <window_info anchor="bottom" id="Version Control" order="8" />
       <window_info anchor="bottom" id="Database Changes" order="9" />
       <window_info anchor="bottom" id="Event Log" order="10" side_tool="true" />
-      <window_info active="true" anchor="bottom" id="Terminal" order="11" visible="true" weight="0.34136546" />
+      <window_info active="true" anchor="bottom" id="Terminal" order="11" visible="true" weight="0.310219" />
       <window_info anchor="bottom" id="Python Console" order="12" />
       <window_info anchor="right" id="Commander" internal_type="SLIDING" order="0" type="SLIDING" weight="0.4" />
       <window_info anchor="right" id="Ant Build" order="1" weight="0.25" />
@@ -467,13 +432,6 @@
     <entry file="file://$PROJECT_DIR$/miner_data/network_data">
       <provider selected="true" editor-type-id="text-editor" />
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/serializer.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state>
-          <caret column="2" selection-start-column="2" selection-end-column="2" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/src/key_generator.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="-278">
@@ -484,11 +442,6 @@
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/blocks/0000.block" />
-    <entry file="file://$PROJECT_DIR$/blocks/length" />
-    <entry file="file://$PROJECT_DIR$/blocks/00000000.block" />
-    <entry file="file://$PROJECT_DIR$/blocks/00000002.block" />
-    <entry file="file://$PROJECT_DIR$/blocks/00000004.block" />
-    <entry file="file://$PROJECT_DIR$/blocks/00000003.block" />
     <entry file="file://$USER_HOME$/vcub/lib/python3.6/site-packages/click/_unicodefun.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="293">
@@ -501,19 +454,6 @@
       <provider selected="true" editor-type-id="text-editor" />
     </entry>
     <entry file="file://$PROJECT_DIR$/transactions">
-      <provider selected="true" editor-type-id="text-editor" />
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/miner_cli.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="510">
-          <caret line="51" column="7" selection-start-line="51" selection-start-column="7" selection-end-line="51" selection-end-column="7" />
-          <folding>
-            <element signature="e#0#10#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/server.py">
       <provider selected="true" editor-type-id="text-editor" />
     </entry>
     <entry file="file://$PROJECT_DIR$/src/colored_print.py">
@@ -530,50 +470,10 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/wallet_cli.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="1950">
-          <caret line="148" column="28" selection-start-line="148" selection-start-column="22" selection-end-line="148" selection-end-column="39" />
-          <folding>
-            <element signature="e#0#10#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/initializer.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="255">
-          <caret line="29" column="20" selection-start-line="29" selection-start-column="20" selection-end-line="29" selection-end-column="20" />
-          <folding>
-            <element signature="e#0#11#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/src/block.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="45">
           <caret line="3" column="47" selection-start-line="3" selection-start-column="47" selection-end-line="3" selection-end-column="47" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/kachkoin_tests.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="270">
-          <caret line="37" selection-start-line="37" selection-end-line="37" />
-          <folding>
-            <element signature="e#0#23#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/blockchain.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="285">
-          <caret line="38" column="29" selection-start-line="38" selection-start-column="29" selection-end-line="38" selection-end-column="29" />
-          <folding>
-            <element signature="e#0#9#0" expanded="true" />
-          </folding>
         </state>
       </provider>
     </entry>
@@ -591,32 +491,156 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/script.py">
+    <entry file="file://$PROJECT_DIR$/src/server.py">
+      <provider selected="true" editor-type-id="text-editor" />
+    </entry>
+    <entry file="file://$USER_HOME$/vcub/lib/python3.6/site-packages/ecdsa/keys.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="2580">
-          <caret line="172" column="38" lean-forward="true" selection-start-line="172" selection-start-column="38" selection-end-line="172" selection-end-column="38" />
-          <folding>
-            <element signature="e#0#14#0" expanded="true" />
-          </folding>
+        <state relative-caret-position="530">
+          <caret line="263" selection-start-line="263" selection-end-line="263" />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/wallet.py">
+    <entry file="file://$PROJECT_DIR$/blocks/00000002.block">
+      <provider selected="true" editor-type-id="text-editor" />
+    </entry>
+    <entry file="file://$PROJECT_DIR$/blocks/00000001.block">
+      <provider selected="true" editor-type-id="text-editor" />
+    </entry>
+    <entry file="file://$PROJECT_DIR$/blocks/00000004.block" />
+    <entry file="file://$PROJECT_DIR$/blocks/00000003.block" />
+    <entry file="file://$PROJECT_DIR$/blocks/00000005.block" />
+    <entry file="file://$PROJECT_DIR$/blocks/00000000.block">
+      <provider selected="true" editor-type-id="text-editor" />
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/blockchain.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="332">
-          <caret line="23" column="20" selection-start-line="23" selection-start-column="20" selection-end-line="23" selection-end-column="20" />
+        <state relative-caret-position="15">
+          <caret line="20" selection-start-line="20" selection-end-line="20" />
           <folding>
-            <element signature="e#0#14#0" expanded="true" />
+            <element signature="e#0#9#0" expanded="true" />
           </folding>
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/src/transaction.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="390">
-          <caret line="26" selection-start-line="26" selection-end-line="26" />
+        <state relative-caret-position="405">
+          <caret line="29" column="21" selection-start-line="29" selection-start-column="21" selection-end-line="29" selection-end-column="21" />
           <folding>
             <element signature="e#0#13#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/tx.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="525">
+          <caret line="43" column="32" selection-start-line="43" selection-start-column="32" selection-end-line="43" selection-end-column="32" />
+          <folding>
+            <element signature="e#0#13#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/script.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="2520">
+          <caret line="174" column="17" selection-start-line="174" selection-start-column="17" selection-end-line="174" selection-end-column="17" />
+          <folding>
+            <element signature="e#0#14#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/serializer.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="420">
+          <caret line="28" column="22" selection-start-line="28" selection-start-column="22" selection-end-line="28" selection-end-column="22" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/wallet.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="722">
+          <caret line="117" column="42" selection-start-line="117" selection-start-column="42" selection-end-line="117" selection-end-column="42" />
+          <folding>
+            <element signature="e#0#14#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/initializer.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="1072">
+          <caret line="122" selection-start-line="122" selection-end-line="122" />
+          <folding>
+            <element signature="e#0#11#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/premine.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="748">
+          <caret line="50" column="71" selection-start-line="50" selection-start-column="71" selection-end-line="50" selection-end-column="71" />
+          <folding>
+            <element signature="e#0#18#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/blocks/length">
+      <provider selected="true" editor-type-id="text-editor" />
+    </entry>
+    <entry file="file://$PROJECT_DIR$/miner_data/privkey_1">
+      <provider selected="true" editor-type-id="text-editor" />
+    </entry>
+    <entry file="file://$PROJECT_DIR$/miner_data/privkey_2">
+      <provider selected="true" editor-type-id="text-editor" />
+    </entry>
+    <entry file="file://$PROJECT_DIR$/miner_data/privkey_3">
+      <provider selected="true" editor-type-id="text-editor" />
+    </entry>
+    <entry file="file://$PROJECT_DIR$/miner_data/publkey_1">
+      <provider selected="true" editor-type-id="text-editor" />
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/test.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="135">
+          <caret line="26" column="22" selection-start-line="26" selection-start-column="22" selection-end-line="26" selection-end-column="22" />
+          <folding>
+            <element signature="e#0#15#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/kachkoin_tests.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="314">
+          <caret line="51" column="41" selection-start-line="51" selection-start-column="41" selection-end-line="51" selection-end-column="41" />
+          <folding>
+            <element signature="e#0#23#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/wallet_cli.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="-283">
+          <caret line="89" column="39" selection-start-line="89" selection-start-column="39" selection-end-line="89" selection-end-column="39" />
+          <folding>
+            <element signature="e#0#10#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/miner_cli.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="424">
+          <caret line="129" selection-start-line="129" selection-end-line="129" />
+          <folding>
+            <element signature="e#0#10#0" expanded="true" />
           </folding>
         </state>
       </provider>

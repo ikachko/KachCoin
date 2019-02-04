@@ -102,10 +102,7 @@ In this mode, the following actions occured:
 
 # TestS
 
-To run my tests for node you should to copy the directory xteams you have just cloned
-and change the config.py variable NODE_PORT to 5100 and nodes.config file content to 5000.
-Run this rpc server in this directory in new terminal window.
-Then open new terminal, go to the xteams directory and run tests:
+To run my tests, go to the Kachkoin/src directory and run tests:
 
 ```
 ~>> python3 kachkoin_tests.py

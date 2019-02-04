@@ -127,7 +127,6 @@ class MinerCli(cmd.Cmd):
             transactions = [serialized_coinbase]
         else:
             transactions.append(serialized_coinbase)
-        prGreen(transactions)
         last_block = Blockchain.get_chain()[-1]
         last_block_h = last_block.hash_block()
 

@@ -95,11 +95,19 @@ class MinerCli(cmd.Cmd):
         nodes = Blockchain.recover_nodes_from_file()
         prLightPurple(nodes)
 
-    def prepare_miner_block(self):
+    def prepare_miner_block(self, args):
+        if args:
+            args_splitted = args.split(' ')
+            privkey_addr = args_splitted[0]
+            f = open(privkey_addr, 'r')
+            miner_privkey_wif = f.read()
+            f.close()
+        else:
+            f = open(MINER_PRIVKEY_FILE, 'r')
+            miner_privkey_wif = f.read()
+            f.close()
         transactions = Blockchain.get_transactions_to_block()
-        f = open(MINER_PRIVKEY_FILE, 'r')
-        miner_privkey_wif = f.read()
-        f.close()
+
 
         miner_privkey = Wallet.WIF_to_priv(miner_privkey_wif)
 
@@ -115,8 +123,10 @@ class MinerCli(cmd.Cmd):
                                                    coinbase.recipient_address,
                                                    publkey,
                                                    sign)
-        transactions.append(serialized_coinbase)
-
+        if transactions[0] == '':
+            transactions = [serialized_coinbase]
+        else:
+            transactions.append(serialized_coinbase)
         last_block = Blockchain.get_chain()[-1]
         last_block_h = last_block.hash_block()
 
@@ -127,7 +137,12 @@ class MinerCli(cmd.Cmd):
         return new_block
 
     def do_mine(self, args):
-        new_block = self.prepare_miner_block()
+        if args:
+            args_splitted = args.split(' ')
+            privkey_addr = args_splitted[0]
+            new_block = self.prepare_miner_block(privkey_addr)
+        else:
+            new_block = self.prepare_miner_block(None)
         prPurple("Mining starting")
         h, block = self.blockchain.mine(new_block)
         prGreen("MINED")
