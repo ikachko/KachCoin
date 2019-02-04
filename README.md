@@ -71,7 +71,7 @@ Run miner-cli to start mining.
 ```
 To mine one block use command mine:
 
-![ScreenShot](https://i.imgur.com/AaFDrX2.png)
+![ScreenShot](https://i.imgur.com/cQaCBhW.png)
 
 Also you can run script premine.py.
 In this mode, the following actions occured:
@@ -113,4 +113,4 @@ Then open new terminal, go to the xteams directory and run tests:
 
 When ran all tests you will see smth like this:
 
-![ScreenShot](https://i.imgur.com/pB3WZD2.png)
+![ScreenShot](https://i.imgur.com/ycNNwfR.png)
