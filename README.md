@@ -53,13 +53,14 @@ Use the new command to generate a new private key and public address.
 Then use privtowif to save your private key in WIF format.
 This will further allow you to mine.
 
-![ScreenShot](https://i.imgur.com/zHAWdDP.png)
+![ScreenShot](https://i.imgur.com/1hbbXp3.png)
+![ScreenShot](https://i.imgur.com/cl3CLLB.png)
 
 Call the send command in wallet cli with two parameters - sender address
 and amount (Example of bitcoin address -  15Pdb6opS18FSfnQb3KjcbEU9sAwQPxHXN).
 Then broadcast transaction to the network:
 
-![ScreenShot](https://i.imgur.com/4aBiH7F.png)
+![ScreenShot](https://i.imgur.com/RxJ1SCT.png)
 
 Okay, now you have two files: public_key and private_key.wif.
 
