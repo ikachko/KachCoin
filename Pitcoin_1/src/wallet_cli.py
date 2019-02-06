@@ -19,6 +19,8 @@ from globals import (
     WALLET_ADDRESS_FILE
 )
 
+from tx import SwRawTransaction
+
 # TODO: Fix wallet balance
 
 
@@ -102,51 +104,28 @@ class WalletCli(cmd.Cmd):
         in_file.write(address)
         in_file.close()
 
-    # def do_send_raw(self, args):
-    #     """send [Recipient Address] [Amount]"""
-    #
-    #     if not args or len(args.split(' ')) != 2:
-    #         prRed(
-    #             'usage:\n'
-    #             'send [Recepient Address] [Amount]'
-    #         )
-    #         return
-    #     args_splitted = args.split(' ')
-    #     recipient_addr = args_splitted[0]
-    #     amount = int(args_splitted[1])
-    #
-    #     f = open(WALLET_ADDRESS_FILE, 'r')
-    #     sender_addr = f.read()
-    #     f.close()
-    #
-    #     f = open(WALLET_PRIVKEY_FILE, 'r')
-    #     privkey_wif = f.read()
-    #     f.close()
-    #
-    #     privkey = Wallet.WIF_to_priv(privkey_wif)
-    #
-    #     tx = RawTransaction(sender_addr, recipient_addr, amount, amount, 0)
-    #     tx_hash = tx.tx_id(privkey)
-    #
-    #     # sign, publkey = tx.sign_transaction(privkey)
-    #
-    #     tx_serialized = tx.raw_transaction(privkey).hex()
-    #
-    #     # tx_serialized = Serializer.serialize(tx.amount, tx.sender_address, tx.recipient_address, publkey, sign)
-    #     # transaction_validation(tx_serialized, tx_hash)
-    #     prPurple('Send from [' + sender_addr + '] to [' + recipient_addr + '] amount -> [' + str(amount) + ']')
-    #     prLightPurple('Serialized transaction : [' + tx_serialized + ']')
-    #     f = open(TRANSACTIONS_POOL, 'a+')
-    #     f.write(tx_serialized + '\n')
-    #     f.close()
+    def sw_do_send(self, args):
+        """send transaction\nFormat: send <% Recipient Address %>, <% Amount %>"""
+
+        if not args or len(args.split(' ')) != 2:
+            prRed(
+                "usage:\n"
+                + "send transaction\nFormat: send <% Recipient Address %>, <% Amount %>"
+            )
+
+        args_splitted = args.split(' ')
+        recipient_addr = args_splitted[0]
+        amount = int(args_splitted[1])
+
+
 
     def do_send(self, args):
         """send [Recipient Address] [Amount]"""
 
         if not args or len(args.split(' ')) != 2:
-            prRed (
+            prRed(
                 'usage:\n'
-                'send [Recepient Address] [Amount]'
+                + 'send [Recepient Address] [Amount]'
             )
             return
 
@@ -157,14 +136,19 @@ class WalletCli(cmd.Cmd):
         f = open(WALLET_ADDRESS_FILE, 'r')
         sender_addr = f.read()
         f.close()
+        f = open(WALLET_PRIVKEY_FILE, 'r')
+        privkey_wif = f.read()
+        f.close()
+
+
+
+        # tx = SwRawTransaction(1, privkey_wif, )
 
         tx = Transaction(sender_addr, recipient_addr, amount)
 
         tx_hash = tx.transaction_hash()
 
-        f = open(WALLET_PRIVKEY_FILE, 'r')
-        privkey_wif = f.read()
-        f.close()
+
 
         privkey = Wallet.WIF_to_priv(privkey_wif)
 

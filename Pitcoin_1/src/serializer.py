@@ -53,9 +53,6 @@ def get_varint(str):
     else:
         return 2, int((str[0:2]), 16)
     swapped_str = swap_bits_in_str(str[2:length])
-    # print(str)
-    # print(length)
-    # print((str[2:length]))
     return length, int(swapped_str, 16)
 
 def make_varint(num):

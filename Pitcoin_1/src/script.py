@@ -48,6 +48,7 @@ str_tokens = {
     OP_HASH256: "aa"
 }
 
+
 def op_equal(stack):
     try:
         a = stack.pop()
@@ -162,6 +163,7 @@ tokens_functors = {
 
 scriptPubKey = hex(OP_HASH256) + " 6fe28c0ab6f1b372c1a6a246ae63f74f931e8365e15a089c68d6190000000000 " + hex(OP_EQUAL)
 scriptSig = 'a4bfa8ab6435ae5f25dae9d89e4eb67dfa94283ca751f393c1ddc5a837bbc31b'
+
 
 def lexer(script):
     commands_list = []
