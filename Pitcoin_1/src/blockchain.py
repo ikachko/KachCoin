@@ -10,6 +10,9 @@ from block import Block
 from serializer import Serializer
 from wallet import Wallet
 from colored_print import *
+from utxo_set import Utxo
+
+from tx import SwCoinbaseTransaction, SwRawTransaction
 
 from globals import (
     PENDING_POOL_FILE,
@@ -21,7 +24,6 @@ from globals import (
 
 
 # TODO: Remove global variables and store all in files
-
 
 class Blockchain:
     def __init__(self):
@@ -35,8 +37,6 @@ class Blockchain:
     @staticmethod
     def get_chain():
         chain = Blockchain.recover_blockchain_from_fileblock()
-        if not chain:
-            return [Blockchain.genesis_block()]
         return chain
 
     @staticmethod
@@ -73,6 +73,7 @@ class Blockchain:
             for tx in to_write:
                 f.write(tx)
             f.close()
+            # print(to_block)
             return to_block
         except Exception as e:
             prRed(e)
@@ -87,7 +88,6 @@ class Blockchain:
         except Exception as e:
             prRed(e)
 
-
     @staticmethod
     def recover_blockchain_from_fileblock():
         idx = 0
@@ -98,6 +98,7 @@ class Blockchain:
                 block = json.load(f)
                 block_dict = dict(block)
                 recovered_block = Block(
+                    bits=block_dict['bits'],
                     timestamp=block_dict['timestamp'],
                     previous_hash=block_dict['previous_hash'],
                     transactions=list(block_dict['transactions']),
@@ -154,10 +155,12 @@ class Blockchain:
                 block = json.load(b_f)
                 block_dict = dict(block)
                 last_block = Block(
-                    timestamp=block_dict['timestamp'],
-                    previous_hash=block_dict['previous_hash'],
-                    transactions=list(block_dict['transactions']),
-                    nonce=block_dict['nonce'])
+                                    bits=block_dict['bits'],
+                                    timestamp=block_dict['timestamp'],
+                                    previous_hash=block_dict['previous_hash'],
+                                    transactions=list(block_dict['transactions']),
+                                    nonce=block_dict['nonce']
+                )
                 return last_block
         except Exception as e:
             prRed(e)
@@ -175,6 +178,7 @@ class Blockchain:
         if self.check_hash(h, self.complexity):
             time_str = strftime("%Y-%m-%d %H:%M:%S", gmtime())
             prGreen('[' + time_str + '] nonce=' + str(block.nonce) + ', hash=' + h)
+            block.block_hash = h
             self.chain.append(block)
             block_height = len(self.chain) - 1
 
@@ -188,25 +192,28 @@ class Blockchain:
             f.write(str(block_height + 1))
             f.close()
 
+            Utxo.add_txs_to_utxo(block.transactions)
+
             return h, block
 
-    @staticmethod
-    def genesis_block():
-        prev_hash = '0'
-        tsx = CoinbaseTransaction()
-        signature = 'pmfvbjhumpsaolbumvynpcpuntpudpaozeafzljzdvyaovmkpzahujlybufvbyzpzaollhyaohukl' \
-                    'clyfaopunaohapupahukdopjopztvylfvbsilhttfzvuceasar7'
+    def genesis_block(self):
+        prev_hash = '0000000000000000000000000000000000000000000000000000000000000000'
 
         f = open(MINER_PRIVKEY_FILE, 'r')
-        miner_privkey_wif = f.read()
+        miner_prkey = f.read()
         f.close()
-        miner_privkey = Wallet.WIF_to_priv(miner_privkey_wif)
-        sign, publkey = Wallet.sign_message(signature, miner_privkey)
-        serialized_tx = Serializer.serialize(tsx.amount, tsx.sender_address, tsx.recipient_address, publkey, signature)
-        genesis = Block(timestamp=0, previous_hash=prev_hash, transactions=[serialized_tx, serialized_tx])
-        f = open(BLOCKS_DIRECTORY + '00000000.block', 'w')
-        json.dump(genesis.to_dict(), f)
-        f.close()
+
+        coin_tsx = SwCoinbaseTransaction(1, miner_prkey, 0)
+
+        serialized_tx = coin_tsx.get_raw_transaction(hex=True)
+        genesis = Block(
+                        bits=self.complexity,
+                        timestamp=0,
+                        previous_hash=prev_hash,
+                        transactions=[serialized_tx]
+        )
+
+        self.mine(genesis)
         return genesis
 
     @staticmethod
