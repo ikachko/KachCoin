@@ -2,6 +2,7 @@ import hashlib
 import base58
 import ecdsa
 import struct
+from wallet import Wallet
 
 from serializer import make_varint, get_varint
 input_amount = 850000
@@ -22,6 +23,7 @@ def flip_byte_order(string):
 def raw_deserialize(raw_tx):
     raw_dict = dict()
 
+    raw_dict['txid'] = hashlib.sha256(hashlib.sha256(bytes.fromhex(raw_tx)).digest()).hexdigest()
     raw_dict['version'] = int(flip_byte_order(raw_tx[0:8]), 16)
 
     # Check SegWit flag
@@ -102,7 +104,6 @@ class SwRawTransaction:
     def __init__(self,
                  version: int,
                  sender_priv_wif: str,
-                 sender_pubkey_compressed: str,
                  sender_addr: str,
                  recipient_addr: str,
                  prevtxid: str,
@@ -111,6 +112,9 @@ class SwRawTransaction:
                  miner_fee: int,
                  locktime: int
                  ):
+        raw_privkey = Wallet.WIF_to_priv(sender_priv_wif)
+        sender_pubkey_compressed = Wallet.compressed_publkey_from_publkey(Wallet.private_to_public(raw_privkey))
+
         self.version = struct.pack("<L", version)
         self.marker = struct.pack("<B", 0)
         self.flag = struct.pack("<B", 1)
@@ -258,8 +262,9 @@ class SwCoinbaseTransaction(SwRawTransaction):
 
     def make_transaction(self, recipient_addr, out_value):
         recipient = recipient_addr
+        print(recipient_addr)
         recipient_hashed_pubkey = base58.b58decode_check(recipient)[1:].hex()
-
+        print(recipient_hashed_pubkey)
         my_output_tx = "0000000000000000000000000000000000000000000000000000000000000000"
 
         # form tx_in
@@ -303,16 +308,17 @@ class SwCoinbaseTransaction(SwRawTransaction):
 
 class RawTransaction:
     def __init__(self,
-                 version : int,
-                 sender_priv_wif : str,
-                 sender_pubkey_compressed : str,
-                 sender_addr : str,
+                 version: int,
+                 sender_priv_wif: str,
+                 sender_addr: str,
                  recipient_addr: str,
-                 prevtxid : str,
-                 in_value : int,
-                 out_value : int,
-                 miner_fee : int,
-                 locktime : int):
+                 prevtxid: str,
+                 in_value: int,
+                 out_value: int,
+                 miner_fee: int,
+                 locktime: int):
+        raw_privkey = Wallet.WIF_to_priv(sender_priv_wif)
+        sender_pubkey_compressed = Wallet.compressed_publkey_from_publkey(Wallet.private_to_public(raw_privkey))
         self.version = struct.pack("<L", version)
         self.tx_in_count = struct.pack("<B", 1)
         self.tx_in = {}  # TEMP
@@ -436,22 +442,3 @@ class RawTransaction:
 
         )
         return real_tx
-
-
-def main():
-    # raw = raw_transaction(sender_wif_priv, sender_compressed_pub, sender_address, recipient_address, prev_txid, input_amount, output_amount, fee)
-    # raw = SwRawTransaction(1, sender_wif_priv, sender_compressed_pub, sender_address, recipient_address, prev_txid, input_amount, output_amount, fee, 0)
-    # print(raw.get_raw_transaction(hex=True))
-    # print(raw.tx_to_sign.hex())
-    # print(raw_deserialize(raw.get_raw_transaction(hex=True))['outputs'])
-    # print(raw_deserialize(raw.get_raw_transaction(hex=True))['witness'])
-    coinbase = '01000000010000000000000000000000000000000000000000000000000000000000000000ffffffff4503ec59062f48616f4254432f53756e204368756e2059753a205a6875616e67205975616e2c2077696c6c20796f75206d61727279206d653f2f06fcc9cacc19c5f278560300ffffffff01529c6d98000000001976a914bfd3ebb5485b49a6cf1657824623ead693b5a45888ac00000000'
-
-    coin_b = SwCoinbaseTransaction(1, recipient_address, 0, 50)
-    print(coin_b.raw_tx.hex())
-    print(raw_deserialize(coin_b.raw_tx.hex()))
-    pass
-
-
-if __name__ == "__main__":
-    main()
