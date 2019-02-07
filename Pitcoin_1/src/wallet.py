@@ -121,8 +121,16 @@ class Wallet:
 
     @staticmethod
     def compressed_publkey_from_publkey(publkey):
+        raw_key = publkey[2:]
 
-        print(publkey)
+        x_key = raw_key[0:int(len(raw_key)/2)]
+        y_key = raw_key[int(len(raw_key)/2):]
+        if int(y_key, 16) % 2 == 0:
+            prefix = '02'
+        else:
+            prefix = '03'
+        compressed_key = prefix + x_key
+        return compressed_key
 
     @staticmethod
     def sign_message(message, private_key):
@@ -136,7 +144,9 @@ class Wallet:
         vk = ecdsa.VerifyingKey.from_string(bytes.fromhex(public_key[2:]), curve=ecdsa.SECP256k1)
         return (vk.verify(bytes.fromhex(signature), message.encode('utf-8')))
 
-privkey = KeyGenerator().generate_key()
-publkey = Wallet.private_to_public(privkey)
-publkey_compressed = Wallet.compressed_publkey_from_publkey(publkey)
-print(publkey_compressed)
+
+# privkey = KeyGenerator().generate_key()
+# publkey = Wallet.private_to_public(privkey)
+# print(publkey)
+# publkey_compressed = Wallet.compressed_publkey_from_publkey(publkey)
+# print(publkey_compressed)
