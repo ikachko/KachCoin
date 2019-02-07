@@ -45,6 +45,8 @@ class KeyGenerator:
         big_int %= (self.CURVE_ORDER - 1)
         big_int += 1
         key = hex(big_int)[2:]
+        if len(key) % 2 != 0:
+            self.generate_key()
         return key
 
     def __generate_big_int(self):
