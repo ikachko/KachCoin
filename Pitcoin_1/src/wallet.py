@@ -4,9 +4,21 @@ import codecs
 import binascii
 import base58
 
+from enum import Enum
+
 from key_generator import KeyGenerator
 from globals import WALLET_PRIVKEY_FILE
 from colored_print import prRed
+
+import bech32
+
+def enum(*args):
+    enums = dict(zip(args, range(len(args))))
+    return type('Enum', (), enums)
+
+NETWORKS = enum('BITCOIN', 'TESTNET')
+
+
 class Wallet:
     def __init__(self, seed=None, key_to_file=False):
         self.__create_priv_key(seed, key_to_file)
@@ -83,6 +95,25 @@ class Wallet:
         return address
 
     @staticmethod
+    def bech32_address_from_compressed_publkey(compressed_publkey, network):
+        if network is NETWORKS.BITCOIN:
+            hrp = 'bc'
+        elif network is NETWORKS.TESTNET:
+            hrp = 'tb'
+        else:
+            prRed("bech32_address_from_compressed_publkey:\n[WRONG NETWORK TYPE]")
+            return
+        witver = 0
+
+        sha256 = hashlib.sha256(bytes.fromhex(compressed_publkey))
+        ripemd160 = hashlib.new('ripemd160')
+        ripemd160.update(sha256.digest())
+        witprog = ripemd160.digest()
+
+        bech32_addr = bech32.encode(hrp, witver, witprog)
+        return bech32_addr
+
+    @staticmethod
     def private_key_to_addr(key):
         return Wallet.public_key_to_addr(Wallet.private_to_public(key))
 
@@ -143,10 +174,3 @@ class Wallet:
     def verify_message(message, public_key, signature):
         vk = ecdsa.VerifyingKey.from_string(bytes.fromhex(public_key[2:]), curve=ecdsa.SECP256k1)
         return (vk.verify(bytes.fromhex(signature), message.encode('utf-8')))
-
-
-# privkey = KeyGenerator().generate_key()
-# publkey = Wallet.private_to_public(privkey)
-# print(publkey)
-# publkey_compressed = Wallet.compressed_publkey_from_publkey(publkey)
-# print(publkey_compressed)
