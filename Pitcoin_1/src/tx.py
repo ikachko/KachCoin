@@ -2,6 +2,8 @@ import hashlib
 import base58
 import ecdsa
 import struct
+import bech32
+
 from wallet import Wallet
 
 from serializer import make_varint, get_varint
@@ -98,6 +100,152 @@ def raw_deserialize(raw_tx):
     raw_dict['locktime'] = int(flip_byte_order(raw_tx[-5:-1]), 16)
 
     return raw_dict
+
+class SwRawTransactionMultInputs:
+    def __init__(self,
+                 version: int,
+                 sender_priv_wif: str,
+                 sender_addr: str,
+                 recipient_addr: str,
+                 inputs,
+                 out_value: int,
+                 miner_fee: int,
+                 locktime: int
+                 ):
+        raw_privkey = Wallet.WIF_to_priv(sender_priv_wif)
+        sender_pubkey_compressed = Wallet.compressed_publkey_from_publkey(Wallet.private_to_public(raw_privkey))
+
+        self.version = struct.pack("<L", version)
+        self.marker = struct.pack("<B", 0)
+        self.flag = struct.pack("<B", 1)
+        self.tx_in_count = struct.pack("<B", len(inputs))
+        self.tx_in = {}  # TEMP
+        self.tx_out_count = struct.pack("<B", 2)
+        self.tx_out1 = {}  # TEMP
+        self.tx_out2 = {}  # TEMP
+        self.lock_time = struct.pack("<L", locktime)
+        self.tx_to_sign = None
+        self.raw_tx = self.make_raw_transaction(sender_priv_wif,
+                                                sender_pubkey_compressed,
+                                                sender_addr,
+                                                recipient_addr,
+                                                inputs,
+                                                out_value,
+                                                miner_fee)
+
+    def make_raw_transaction(self,
+                             sender_priv_wif,
+                             sender_pubkey_compressed,
+                             sender_addr,
+                             recipient_addr,
+                             inputs,
+                             out_value,
+                             miner_fee):
+
+        my_address = sender_addr
+        my_hashed_pubkey = Wallet.get_hashed_pbk_from_addr(my_address)
+
+        my_private_key = sender_priv_wif
+        my_private_key_hex = base58.b58decode_check(my_private_key)[1:33].hex()
+
+        recipient = recipient_addr
+        recipient_hashed_pubkey = Wallet.get_hashed_pbk_from_addr(recipient)
+
+        # form tx_out
+        self.tx_out1["value"] = struct.pack("<Q", out_value)
+        self.tx_out1["pk_script"] = bytes.fromhex("76a914%s88ac" % recipient_hashed_pubkey)
+        self.tx_out1["pk_script_bytes"] = struct.pack("<B", len(self.tx_out1["pk_script"]))
+
+        input_value = 0
+        for i in inputs:
+            input_value += i['value']
+
+        return_value = input_value - output_amount - miner_fee  # 1000 left as fee
+        self.tx_out2["value"] = struct.pack("<Q", return_value)
+        self.tx_out2["pk_script"] = bytes.fromhex("76a914%s88ac" % my_hashed_pubkey)
+        self.tx_out2["pk_script_bytes"] = struct.pack("<B", len(self.tx_out2["pk_script"]))
+
+        pk_bytes = bytes.fromhex(my_private_key_hex)
+
+        witnesses = []
+        for i in range(len(inputs)):
+            msg_for_sign = b''
+            for j in range(len(inputs)):
+                msg_for_sign += self.version
+                msg_for_sign += self.marker
+                msg_for_sign += self.flag
+                msg_for_sign += self.tx_in_count
+                msg_for_sign += bytes.fromhex(flip_byte_order(inputs[i]['txid']))
+                msg_for_sign += struct.pack("<L", i)
+                if i == j:
+                    script = bytes.fromhex("76a914%s88ac" % my_hashed_pubkey)
+                    msg_for_sign += struct.pack("<B", len(script))
+                    msg_for_sign += script
+                else:
+                    msg_for_sign += struct.pack("<B", 0)
+            msg_for_sign += self.tx_out_count
+            msg_for_sign += self.tx_out1["value"]
+            msg_for_sign += self.tx_out1["pk_script_bytes"]
+            msg_for_sign += self.tx_out1["pk_script"]
+            msg_for_sign += self.tx_out2["value"]
+            msg_for_sign += self.tx_out2["pk_script_bytes"]
+            msg_for_sign += self.tx_out2["pk_script"]
+            msg_for_sign += self.lock_time
+            msg_for_sign += struct.pack("<L", 1)
+
+            hashed_tx_to_sign = hashlib.sha256(hashlib.sha256(msg_for_sign).digest()).digest()
+            sk = ecdsa.SigningKey.from_string(pk_bytes, curve=ecdsa.SECP256k1)
+            signature = sk.sign_digest(hashed_tx_to_sign, sigencode=ecdsa.util.sigencode_der_canonize())
+
+            pk_bytes_hex = sender_pubkey_compressed
+
+            witness = (
+                struct.pack("<B", len(signature) + 1)
+                + signature
+                + b'\01'
+                + struct.pack("<B", len(bytes.fromhex(pk_bytes_hex)))
+                + bytes.fromhex(pk_bytes_hex)
+            )
+            witnesses.append(witness)
+
+        bytes_witnesses = b''
+        for w in witnesses:
+            bytes_witnesses += w
+
+        real_tx = (
+                self.version
+                + self.marker
+                + self.flag
+                + self.tx_in_count
+                + self.tx_in["tx_out_hash"]
+                + self.tx_in["tx_out_index"]
+                + struct.pack("<B", 0)
+                # + struct.pack("<B", 0)
+                + self.tx_in["sequence"]
+                + self.tx_out_count
+                + self.tx_out1["value"]
+                + self.tx_out1["pk_script_bytes"]
+                + self.tx_out1["pk_script"]
+                + self.tx_out2["value"]
+                + self.tx_out2["pk_script_bytes"]
+                + self.tx_out2["pk_script"]
+                + struct.pack("<B", len(inputs) + 1)  # Num of inputs
+                + struct.pack("<B", len(witnesses) + 1)
+                + bytes_witnesses
+                + self.lock_time
+        )
+        return real_tx
+
+    def unlock_utxo(self, public_key, utxo):
+        pass
+
+    def get_raw_transaction(self, hex=False):
+        if self.raw_tx:
+            if hex:
+                return self.raw_tx.hex()
+            else:
+                return self.raw_tx
+
 
 
 class SwRawTransaction:
@@ -246,7 +394,7 @@ class SwRawTransaction:
 class SwCoinbaseTransaction(SwRawTransaction):
     def __init__(self,
                  version: int,
-                 recipient_addr: str,
+                 recipient_hashed_pbk: str,
                  locktime: int,
                  out_value=50):
         self.version = struct.pack("<L", version)
@@ -258,13 +406,9 @@ class SwCoinbaseTransaction(SwRawTransaction):
         self.tx_out = {}
         self.lock_time = struct.pack("<L", locktime)
 
-        self.raw_tx = self.make_transaction(recipient_addr, out_value)
+        self.raw_tx = self.make_transaction(recipient_hashed_pbk, out_value)
 
-    def make_transaction(self, recipient_addr, out_value):
-        recipient = recipient_addr
-        print(recipient_addr)
-        recipient_hashed_pubkey = base58.b58decode_check(recipient)[1:].hex()
-        print(recipient_hashed_pubkey)
+    def make_transaction(self, recipient_hashed_pbk, out_value):
         my_output_tx = "0000000000000000000000000000000000000000000000000000000000000000"
 
         # form tx_in
@@ -274,7 +418,7 @@ class SwCoinbaseTransaction(SwRawTransaction):
 
         # form tx_out
         self.tx_out["value"] = struct.pack("<Q", out_value)
-        self.tx_out["pk_script"] = bytes.fromhex("76a914%s88ac" % recipient_hashed_pubkey)
+        self.tx_out["pk_script"] = bytes.fromhex("76a914%s88ac" % recipient_hashed_pbk)
         self.tx_out["pk_script_bytes"] = struct.pack("<B", len(self.tx_out["pk_script"]))
 
         public_key_bytes_hex = "492077616e7420746f2074616c6b20746f20796f7520616761696e"

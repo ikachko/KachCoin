@@ -16,7 +16,8 @@ from tx import SwCoinbaseTransaction
 from globals import (
     BLOCKS_DIRECTORY,
     MINER_NODES,
-    MINER_PRIVKEY_FILE
+    MINER_PRIVKEY_FILE,
+    NETWORKS
 )
 
 
@@ -107,7 +108,10 @@ class MinerCli(cmd.Cmd):
         miner_privkey = f.read()
         f.close()
 
-        coinbase = SwCoinbaseTransaction(1, miner_privkey, 0)
+        miner_privkey = miner_privkey.replace('\n', '')
+
+        miner_hashed_pbk = Wallet.get_hashed_pbk_from_addr(Wallet.bech32_addr_from_privkey(miner_privkey, NETWORKS.BITCOIN))
+        coinbase = SwCoinbaseTransaction(1, miner_hashed_pbk, 0)
 
         raw_coinbase_tx = coinbase.get_raw_transaction(hex=True)
         block_txs.append(raw_coinbase_tx)
@@ -117,10 +121,12 @@ class MinerCli(cmd.Cmd):
 
         timestamp = int(time.time())
 
-        new_block = Block(previous_hash=last_block_h, transactions=block_txs, timestamp=timestamp)
+        new_block = Block(version=1, bits=2, previous_hash=last_block_h, transactions=block_txs, timestamp=timestamp)
 
         return new_block
 
+    def do_automine(self, args):
+        
     def do_mine(self, args):
 
         new_block = self.prepare_mine_swblock()

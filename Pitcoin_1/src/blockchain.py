@@ -19,7 +19,8 @@ from globals import (
     BLOCKS_LENGTH_FILE,
     BLOCKS_DIRECTORY,
     MINER_PRIVKEY_FILE,
-    MINER_NODES
+    MINER_NODES,
+    NETWORKS
 )
 
 
@@ -203,7 +204,8 @@ class Blockchain:
         miner_prkey = f.read()
         f.close()
 
-        coin_tsx = SwCoinbaseTransaction(1, miner_prkey, 0)
+        hashed_pbk = Wallet.get_hashed_pbk_from_addr(Wallet.bech32_addr_from_privkey(miner_prkey, NETWORKS.BITCOIN))
+        coin_tsx = SwCoinbaseTransaction(1, hashed_pbk, 0)
 
         serialized_tx = coin_tsx.get_raw_transaction(hex=True)
         genesis = Block(

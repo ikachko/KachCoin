@@ -7,7 +7,8 @@ from pyfiglet import Figlet
 from key_generator import KeyGenerator
 from wallet import Wallet
 from transaction import Transaction
-# from tx import RawTransaction
+from utxo_set import Utxo
+from tx import RawTransaction, SwRawTransaction, SwRawTransactionMultInputs
 from tx_validator import transaction_validation
 from serializer import Serializer, Deserializer
 from blockchain import Blockchain
@@ -16,7 +17,10 @@ from globals import (
     TRANSACTIONS_POOL,
     PENDING_POOL_FILE,
     WALLET_PRIVKEY_FILE,
-    WALLET_ADDRESS_FILE
+    WALLET_ADDRESS_FILE,
+    WALLET_SEGWIT_ADDRESS_FILE,
+    WALLET_SEGWIT_PRIVKEY_FILE,
+    NETWORKS
 )
 
 from tx import SwRawTransaction
@@ -38,7 +42,7 @@ class WalletCli(cmd.Cmd):
         self.doc_header = "Possible commands (for reference of specific command type 'help [command]'"
 
     def do_new(self, args):
-        """new [filename] - generate new private and public key\nnew [filename] [seed] - generate keys with text seed"""
+        """new - generate new private key and public address\nnew [seed] - generate key with text seed"""
         keygen = KeyGenerator()
 
         if args:
@@ -62,20 +66,12 @@ class WalletCli(cmd.Cmd):
         if args and len(args.split(' ')) == 1:
             address = args
             balance = 0
-
-            blocks = Blockchain.recover_blockchain_from_fileblock()
-            for block in blocks:
-                b_dict = block.to_dict()
-                for transactions in b_dict['transactions']:
-                    deserialized_tx = Deserializer.deserialize(transactions)
-                    prPurple("Sender addr " + deserialized_tx['sender_addr'])
-                    prCyan("Recepient addr " + deserialized_tx['recepient_addr'])
-                    if deserialized_tx['sender_addr'] == address:
-                        prGreen("Added " + deserialized_tx['num_of_coins'] + " coins")
-                        balance -= deserialized_tx['num_of_coins']
-                    if deserialized_tx['recepient_addr'] == address:
-                        prRed("Removed " + deserialized_tx['num_of_coins'] + " coins")
-                        balance += deserialized_tx['num_of_coins']
+            utxo = Utxo.get_utxo_of_addr(address)
+            if not utxo:
+                prPurple("No utxo of this address")
+                return
+            for u in utxo:
+                balance += u['value']
             prPurple("Balance of address " + address + " is " + str(balance) + " coins")
 
     def do_import(self, args):
@@ -103,21 +99,6 @@ class WalletCli(cmd.Cmd):
         in_file = open(WALLET_ADDRESS_FILE, 'w')
         in_file.write(address)
         in_file.close()
-
-    def sw_do_send(self, args):
-        """send transaction\nFormat: send <% Recipient Address %>, <% Amount %>"""
-
-        if not args or len(args.split(' ')) != 2:
-            prRed(
-                "usage:\n"
-                + "send transaction\nFormat: send <% Recipient Address %>, <% Amount %>"
-            )
-
-        args_splitted = args.split(' ')
-        recipient_addr = args_splitted[0]
-        amount = int(args_splitted[1])
-
-
 
     def do_send(self, args):
         """send [Recipient Address] [Amount]"""
@@ -191,6 +172,96 @@ class WalletCli(cmd.Cmd):
         except Exception as e:
             prRed(e)
             prRed("Broadcast Error")
+
+
+    # SEGREGATE WITNESS FUNCTIONS
+
+    def do_swnew(self, args):
+        """swnew [HRP] - generate new private key and public address\nswnew [HRP] [seed] - generate key with text seed\n
+        HRP - Human Readable Part stands for type of network for which you want to create new address:\n
+        BC - Bitcoin Network\n
+        TB - Testnet Network\n"""
+
+        usage = 'swnew [HRP] - generate new private key and public address\nswnew [HRP] [seed] - generate key with text seed\n' \
+                'HRP - Human Readable Part stands for type of network for which you want to create new address:\n' \
+                '0) BC - Bitcoin Network\n' \
+                '1) TB - Testnet Network\n'
+
+        keygen = KeyGenerator()
+
+        splitted = args.split(' ')
+        if len(list(splitted)) < 1 or splitted[0] not in ('BC', 'TB'):
+            prRed("Wrong parameters!")
+            prCyan(usage)
+            return
+
+        if splitted[0] == 'BC':
+            network = NETWORKS.BITCOIN
+        elif splitted[0] == 'TB':
+            network = NETWORKS.TESTNET
+        else:
+            prRed("How i didn't found it in usage check? ")
+            return
+
+        for arg in args:
+            keygen.seed_input(arg)
+
+        private_key = keygen.generate_key()
+
+        while len(private_key) != 64:
+            private_key = KeyGenerator().generate_key()
+
+        prPurple('raw private key:')
+        prLightPurple(private_key)
+        prPurple('segwit address:')
+        swaddress = Wallet.bech32_addr_from_privkey(private_key, network)
+        prLightPurple(swaddress)
+
+        # Write new address to file
+        f = open(WALLET_SEGWIT_ADDRESS_FILE, 'w')
+        f.write(swaddress)
+        f.close()
+
+        privkey_wif = Wallet.priv_to_WIF(private_key)
+
+        # Write privkey in WIF to file
+        f = open(WALLET_SEGWIT_PRIVKEY_FILE, 'w')
+        f.write(privkey_wif)
+        f.close()
+
+    def do_swsend(self, args):
+        """send transaction\nFormat: send <% Recipient Address %>, <% Amount %>"""
+
+        if not args or len(args.split(' ')) != 3:
+            prRed(
+                "usage:\n"
+                + "send transaction\nFormat: send <% Recipient Address %>, <% Amount %>"
+            )
+
+        args_splitted = args.split(' ')
+        recipient_addr = args_splitted[0]
+        amount = int(args_splitted[1])
+
+        f = open(WALLET_SEGWIT_PRIVKEY_FILE, 'r')
+        privkey_wif = f.read()
+        f.close()
+
+        f = open(WALLET_SEGWIT_ADDRESS_FILE, 'r')
+        sender_addr = f.read()
+        f.close()
+
+        inputs = Utxo.get_inputs(sender_addr, amount)
+        if inputs:
+            sw_tx = SwRawTransactionMultInputs(version=1,
+                                               sender_priv_wif=privkey_wif,
+                                               sender_addr=sender_addr,
+                                               recipient_addr=recipient_addr,
+                                               inputs=inputs,
+                                               out_value=50,
+                                               miner_fee=0,
+                                               locktime=0)
+            print(sw_tx.raw_tx().hex())
+        # sw_tx = SwRawTransaction(1, privkey_wif, sender_addr, )
 
 
     def default(self, line):

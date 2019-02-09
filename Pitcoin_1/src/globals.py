@@ -23,5 +23,16 @@ WALLET_PRIVKEY_FILE = project_path + '/privkey.wif'
 
 WALLET_ADDRESS_FILE = project_path + '/address'
 
+WALLET_SEGWIT_ADDRESS_FILE = project_path + '/sw_address'
+
+WALLET_SEGWIT_PRIVKEY_FILE = project_path + '/sw_privkey.wif'
+
 UTXO_POOL_FILE = project_path + '/utxo_pool.db'
 
+
+def enum(*args):
+    enums = dict(zip(args, range(len(args))))
+    return type('Enum', (), enums)
+
+
+NETWORKS = enum('BITCOIN', 'TESTNET')
