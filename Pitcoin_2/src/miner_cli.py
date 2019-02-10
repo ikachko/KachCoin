@@ -123,7 +123,7 @@ class MinerCli(cmd.Cmd):
         miner_privkey = miner_privkey.replace('\n', '')
 
         miner_hashed_pbk = Wallet.get_hashed_pbk_from_addr(Wallet.bech32_addr_from_privkey(miner_privkey, NETWORKS.BITCOIN))
-        coinbase = SwCoinbaseTransaction(1, miner_hashed_pbk, 0)
+        coinbase = SwCoinbaseTransaction(1, miner_hashed_pbk, 0, out_value=self.blockchain.coinbase)
 
         raw_coinbase_tx = coinbase.get_raw_transaction(hex=True)
         block_txs.append(raw_coinbase_tx)

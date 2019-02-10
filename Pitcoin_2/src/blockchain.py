@@ -35,6 +35,7 @@ class Blockchain:
         self.nodes = Blockchain.recover_nodes_from_file()
         self.tx_pool = PendingPool()
         self.target = 0x000fffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff
+        self.coinbase = 50000000
         if not self.chain:
             self.chain = [self.genesis_block()]
 
@@ -219,6 +220,7 @@ class Blockchain:
             Utxo.add_txs_to_utxo(block.transactions)
             if len(self.chain) % 5 == 0:
                 self.recalculate_difficulty()
+                self.coinbase = self.coinbase * 0.5
             return h, block
 
     def genesis_block(self):
@@ -228,10 +230,8 @@ class Blockchain:
         miner_prkey = f.read().replace('\n', '')
         f.close()
 
-        # miner_prkey = miner_prkey.replace('\n', '')
-
         hashed_pbk = Wallet.get_hashed_pbk_from_addr(Wallet.bech32_addr_from_privkey(miner_prkey, NETWORKS.BITCOIN))
-        coin_tsx = SwCoinbaseTransaction(1, hashed_pbk, 0)
+        coin_tsx = SwCoinbaseTransaction(1, hashed_pbk, 0, out_value=self.coinbase)
 
         serialized_tx = coin_tsx.get_raw_transaction(hex=True)
         genesis = Block(

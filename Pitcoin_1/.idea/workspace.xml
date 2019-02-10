@@ -2,39 +2,8 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="fa56a6c6-bffa-4846-9d0d-eb441aae36d7" name="Default Changelist" comment="">
-      <change afterPath="$PROJECT_DIR$/src/utils.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/blocks/length" beforeDir="false" afterPath="$PROJECT_DIR$/blocks/length" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/miner_data/privkey.wif" beforeDir="false" afterPath="$PROJECT_DIR$/miner_data/privkey.wif" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/pending_pool" beforeDir="false" afterPath="$PROJECT_DIR$/pending_pool" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/address" beforeDir="false" afterPath="$PROJECT_DIR$/src/address" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/bad_tx.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/block.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/block.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/blockchain.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/blockchain.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/globals.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/globals.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/initializer.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/initializer.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/merkle.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/merkle.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/miner_cli.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/miner_cli.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/script.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/script.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/stack_machine.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/stack_machine.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/tx.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/tx.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/utxo_set.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/utxo_set.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/wallet.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/wallet.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/wallet_cli.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/wallet_cli.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/transactions" beforeDir="false" afterPath="$PROJECT_DIR$/transactions" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../Pitcoin_2/src/block.py" beforeDir="false" afterPath="$PROJECT_DIR$/../Pitcoin_2/src/block.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../Pitcoin_2/src/blockchain.py" beforeDir="false" afterPath="$PROJECT_DIR$/../Pitcoin_2/src/blockchain.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../Pitcoin_2/src/globals.py" beforeDir="false" afterPath="$PROJECT_DIR$/../Pitcoin_2/src/globals.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../Pitcoin_2/src/initializer.py" beforeDir="false" afterPath="$PROJECT_DIR$/../Pitcoin_2/src/initializer.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../Pitcoin_2/src/merkle.py" beforeDir="false" afterPath="$PROJECT_DIR$/../Pitcoin_2/src/merkle.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../Pitcoin_2/src/miner_cli.py" beforeDir="false" afterPath="$PROJECT_DIR$/../Pitcoin_2/src/miner_cli.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../Pitcoin_2/src/script.py" beforeDir="false" afterPath="$PROJECT_DIR$/../Pitcoin_2/src/script.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../Pitcoin_2/src/serializer.py" beforeDir="false" afterPath="$PROJECT_DIR$/../Pitcoin_2/src/serializer.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../Pitcoin_2/src/tx.py" beforeDir="false" afterPath="$PROJECT_DIR$/../Pitcoin_2/src/tx.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../Pitcoin_2/src/tx_validator.py" beforeDir="false" afterPath="$PROJECT_DIR$/../Pitcoin_2/src/tx_validator.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../Pitcoin_2/src/utxo_set.py" beforeDir="false" afterPath="$PROJECT_DIR$/../Pitcoin_2/src/utxo_set.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../Pitcoin_2/src/wallet.py" beforeDir="false" afterPath="$PROJECT_DIR$/../Pitcoin_2/src/wallet.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../Pitcoin_2/src/wallet_cli.py" beforeDir="false" afterPath="$PROJECT_DIR$/../Pitcoin_2/src/wallet_cli.py" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
@@ -48,19 +17,19 @@
     <SUITE FILE_PATH="coverage/Pitcoin_1$Pitcoin_1.coverage" NAME="Pitcoin_1 Coverage Results" MODIFIED="1549537848356" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
   </component>
   <component name="FileEditorManager">
-    <splitter split-orientation="horizontal" split-proportion="0.4327689">
+    <splitter split-orientation="horizontal" split-proportion="0.6668327">
       <split-first>
         <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
-          <file pinned="false" current-in-tab="false">
+          <file pinned="false" current-in-tab="true">
             <entry file="file://$PROJECT_DIR$/src/tx.py">
               <provider selected="true" editor-type-id="text-editor">
-                <state relative-caret-position="60">
+                <state relative-caret-position="-5411">
                   <caret line="4" selection-start-line="4" selection-end-line="4" />
                 </state>
               </provider>
             </entry>
           </file>
-          <file pinned="false" current-in-tab="true">
+          <file pinned="false" current-in-tab="false">
             <entry file="file:///Library/Frameworks/Python.framework/Versions/3.6/lib/python3.6/tokenize.py">
               <provider selected="true" editor-type-id="text-editor">
                 <state relative-caret-position="303">
@@ -129,8 +98,8 @@
           <file pinned="false" current-in-tab="false">
             <entry file="file://$PROJECT_DIR$/src/blockchain.py">
               <provider selected="true" editor-type-id="text-editor">
-                <state relative-caret-position="444">
-                  <caret line="144" column="14" selection-start-line="144" selection-start-column="14" selection-end-line="144" selection-end-column="14" />
+                <state relative-caret-position="527">
+                  <caret line="214" selection-start-line="214" selection-end-line="214" />
                   <folding>
                     <element signature="e#0#9#0" expanded="true" />
                   </folding>
@@ -156,11 +125,11 @@
         <splitter split-orientation="horizontal" split-proportion="0.81738365">
           <split-first>
             <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
-              <file pinned="false" current-in-tab="true">
+              <file pinned="false" current-in-tab="false">
                 <entry file="file://$PROJECT_DIR$/src/tx.py">
                   <provider selected="true" editor-type-id="text-editor">
-                    <state relative-caret-position="291">
-                      <caret line="196" lean-forward="true" selection-start-line="196" selection-end-line="196" />
+                    <state relative-caret-position="21">
+                      <caret line="178" column="21" lean-forward="true" selection-start-line="178" selection-start-column="21" selection-end-line="178" selection-end-column="21" />
                       <folding>
                         <element signature="e#0#14#0" expanded="true" />
                       </folding>
@@ -205,7 +174,7 @@
                 <entry file="file://$PROJECT_DIR$/src/blockchain.py">
                   <provider selected="true" editor-type-id="text-editor">
                     <state relative-caret-position="-2">
-                      <caret line="169" lean-forward="true" selection-start-line="169" selection-end-line="169" />
+                      <caret line="170" lean-forward="true" selection-start-line="170" selection-end-line="170" />
                       <folding>
                         <element signature="e#0#9#0" expanded="true" />
                       </folding>
@@ -213,11 +182,11 @@
                   </provider>
                 </entry>
               </file>
-              <file pinned="false" current-in-tab="false">
+              <file pinned="false" current-in-tab="true">
                 <entry file="file://$PROJECT_DIR$/src/miner_cli.py">
                   <provider selected="true" editor-type-id="text-editor">
-                    <state relative-caret-position="1215">
-                      <caret line="101" column="40" selection-start-line="101" selection-start-column="40" selection-end-line="101" selection-end-column="40" />
+                    <state relative-caret-position="584">
+                      <caret line="125" column="27" selection-start-line="125" selection-start-column="19" selection-end-line="125" selection-end-column="40" />
                       <folding>
                         <element signature="e#0#10#0" expanded="true" />
                       </folding>
@@ -305,7 +274,7 @@
                 <entry file="file://$PROJECT_DIR$/src/blockchain.py">
                   <provider selected="true" editor-type-id="text-editor">
                     <state relative-caret-position="3285">
-                      <caret line="227" column="30" selection-start-line="227" selection-start-column="30" selection-end-line="227" selection-end-column="30" />
+                      <caret line="229" column="30" selection-start-line="229" selection-start-column="30" selection-end-line="229" selection-end-column="30" />
                       <folding>
                         <element signature="e#0#9#0" expanded="true" />
                       </folding>
@@ -421,19 +390,19 @@
         <option value="$PROJECT_DIR$/src/merkle.py" />
         <option value="$PROJECT_DIR$/src/script.py" />
         <option value="$PROJECT_DIR$/src/stack_machine.py" />
-        <option value="$PROJECT_DIR$/src/miner_cli.py" />
         <option value="$PROJECT_DIR$/sw_address" />
         <option value="$PROJECT_DIR$/sw_privkey.wif" />
         <option value="$PROJECT_DIR$/miner_data/privkey.wif" />
         <option value="$PROJECT_DIR$/src/server.py" />
         <option value="$PROJECT_DIR$/sw_transactions" />
         <option value="$PROJECT_DIR$/src/globals.py" />
-        <option value="$PROJECT_DIR$/src/blockchain.py" />
         <option value="$PROJECT_DIR$/src/initializer.py" />
         <option value="$PROJECT_DIR$/src/wallet_cli.py" />
         <option value="$PROJECT_DIR$/src/wallet.py" />
         <option value="$PROJECT_DIR$/src/utxo_set.py" />
         <option value="$PROJECT_DIR$/src/tx.py" />
+        <option value="$PROJECT_DIR$/src/blockchain.py" />
+        <option value="$PROJECT_DIR$/src/miner_cli.py" />
       </list>
     </option>
   </component>
@@ -591,12 +560,12 @@
       <workItem from="1549618927076" duration="14952000" />
       <workItem from="1549707085739" duration="3731000" />
       <workItem from="1549794323746" duration="5051000" />
-      <workItem from="1549805533587" duration="10832000" />
+      <workItem from="1549805533587" duration="11162000" />
     </task>
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="121557000" />
+    <option name="totallyTimeSpent" value="121887000" />
   </component>
   <component name="TodoView">
     <todo-panel id="selected-file">
@@ -609,13 +578,12 @@
   </component>
   <component name="ToolWindowManager">
     <frame x="0" y="0" width="2560" height="1440" extended-state="0" />
-    <editor active="true" />
     <layout>
-      <window_info content_ui="combo" id="Project" order="0" visible="true" weight="0.2025417" />
+      <window_info active="true" content_ui="combo" id="Project" order="0" visible="true" weight="0.2025417" />
       <window_info id="Structure" order="1" side_tool="true" weight="0.25" />
       <window_info id="Favorites" order="2" side_tool="true" />
       <window_info anchor="bottom" id="Message" order="0" />
-      <window_info active="true" anchor="bottom" id="Find" order="1" visible="true" weight="0.28540146" />
+      <window_info anchor="bottom" id="Find" order="1" visible="true" weight="0.28540146" />
       <window_info anchor="bottom" id="Run" order="2" weight="0.3189781" />
       <window_info anchor="bottom" id="Debug" order="3" weight="0.31824818" />
       <window_info anchor="bottom" id="Cvs" order="4" weight="0.25" />
@@ -964,32 +932,12 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/miner_cli.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="1215">
-          <caret line="101" column="40" selection-start-line="101" selection-start-column="40" selection-end-line="101" selection-end-column="40" />
-          <folding>
-            <element signature="e#0#10#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/src/utxo_set.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="-735">
           <caret column="63" lean-forward="true" selection-start-column="63" selection-end-column="63" />
           <folding>
             <element signature="e#65#78#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/blockchain.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-2">
-          <caret line="169" lean-forward="true" selection-start-line="169" selection-end-line="169" />
-          <folding>
-            <element signature="e#0#9#0" expanded="true" />
           </folding>
         </state>
       </provider>
@@ -1014,12 +962,32 @@
         </state>
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/src/blockchain.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="-2">
+          <caret line="170" lean-forward="true" selection-start-line="170" selection-end-line="170" />
+          <folding>
+            <element signature="e#0#9#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/src/tx.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="291">
-          <caret line="196" lean-forward="true" selection-start-line="196" selection-end-line="196" />
+        <state relative-caret-position="21">
+          <caret line="178" column="21" lean-forward="true" selection-start-line="178" selection-start-column="21" selection-end-line="178" selection-end-column="21" />
           <folding>
             <element signature="e#0#14#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/miner_cli.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="584">
+          <caret line="125" column="27" selection-start-line="125" selection-start-column="19" selection-end-line="125" selection-end-column="40" />
+          <folding>
+            <element signature="e#0#10#0" expanded="true" />
           </folding>
         </state>
       </provider>
