@@ -18,11 +18,7 @@ def merkle_root(transactions_list):
 
 def merkle(transactions_list):
     hashed_transactions = []
-    prCyan(transactions_list)
     for transaction in transactions_list:
-        prRed(type(transaction))
-        prRed(transaction)
-
         hashed_transactions.append(hashlib.sha256(hashlib.sha256(transaction.encode('utf-8')).digest()).digest())
     return merkle_root(hashed_transactions).hex()
 

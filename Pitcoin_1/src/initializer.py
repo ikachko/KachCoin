@@ -5,11 +5,13 @@ from flask import (Flask,
 
 from blockchain import Blockchain
 from colored_print import prRed
+from wallet import Wallet
 
 from globals import (
     PENDING_POOL_FILE,
     MINER_NODES,
-    MINER_NETWORK_DATA
+    MINER_NETWORK_DATA,
+    DIFFICULTY_FILE
 )
 
 # TODO: Server config file
@@ -77,6 +79,12 @@ def get_chain():
     json_chain = json.dumps(dict_chain)
     return json_chain
 
+@node.route('/getDifficulty', methods=['GET'])
+def get_blockchain_difficulty():
+    f = open(DIFFICULTY_FILE)
+    blockchain_difficulty = f.read()
+    f.close()
+    return json.dumps(blockchain_difficulty)
 
 @node.route('/chain/length', methods=['GET'])
 def get_chain_length():
@@ -106,8 +114,8 @@ def get_last_block():
 @node.route('/balance', methods=['GET'])
 def get_balance():
     addr = request.args.get('address')
-    im_sorry = "500"
-    return im_sorry
+    balance = Wallet.get_balance(addr)
+    return str(balance)
 
 
 def get_miner_ip_and_port():

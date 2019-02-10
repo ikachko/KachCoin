@@ -1,6 +1,7 @@
 import cmd
 import time
 import json
+import signal
 
 from pyfiglet import Figlet
 
@@ -20,7 +21,6 @@ from globals import (
     NETWORKS
 )
 
-
 class MinerCli(cmd.Cmd):
 
     def __init__(self):
@@ -36,6 +36,18 @@ class MinerCli(cmd.Cmd):
         self.blockchain = Blockchain()
         self.chain = Blockchain.recover_blockchain_from_fileblock()
         self.nodes = Blockchain.recover_nodes_from_file()
+
+    def do_show_miner_data(self, args):
+        try:
+            f = open(MINER_PRIVKEY_FILE, 'r')
+            privkey = f.read().replace('\n', '')
+            f.close()
+            miner_bech_addr = Wallet.bech32_addr_from_privkey(privkey, NETWORKS.BITCOIN)
+            prLightPurple("Miner bech32 addr : [" + miner_bech_addr + "]")
+            miner_addr = Wallet.private_key_to_addr(privkey)
+            prLightPurple("Miner raw addr: [" + miner_addr + "]")
+        except Exception as e:
+            prRed(e)
 
     def do_show_blocks(self, args):
         i = 0
@@ -126,18 +138,23 @@ class MinerCli(cmd.Cmd):
         return new_block
 
     def do_automine(self, args):
-        
+        try:
+            while True:
+                self.do_mine(args)
+        except KeyboardInterrupt:
+            prGreen('Mining ended')
+
     def do_mine(self, args):
 
         new_block = self.prepare_mine_swblock()
-        prPurple("Mining starting")
+        # prPurple("Mining starting")
         h, block = self.blockchain.mine(new_block)
-        prGreen("MINED")
-        prPurple('height : ' + str(len(self.blockchain.chain)))
-        prPurple('nonce : ' + str(block.nonce))
-
-        prPurple('hash : ' + h)
-        print(new_block.to_dict())
+        # prGreen("MINED")
+        # prPurple('height : ' + str(len(self.blockchain.chain)))
+        # prPurple('nonce : ' + str(block.nonce))
+        #
+        # prPurple('hash : ' + h)
+        # print(new_block.to_dict())
 
     def prepare_miner_block(self, args):
         if args:

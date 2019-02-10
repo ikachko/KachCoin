@@ -19,6 +19,8 @@ PENDING_POOL_FILE = project_path + '/pending_pool'
 
 TRANSACTIONS_POOL = project_path + '/transactions'
 
+SW_TRANSACTIONS_POOL = project_path + '/sw_transactions'
+
 WALLET_PRIVKEY_FILE = project_path + '/privkey.wif'
 
 WALLET_ADDRESS_FILE = project_path + '/address'
@@ -29,6 +31,7 @@ WALLET_SEGWIT_PRIVKEY_FILE = project_path + '/sw_privkey.wif'
 
 UTXO_POOL_FILE = project_path + '/utxo_pool.db'
 
+DIFFICULTY_FILE = project_path + '/blocks/blockchain_difficulty'
 
 def enum(*args):
     enums = dict(zip(args, range(len(args))))

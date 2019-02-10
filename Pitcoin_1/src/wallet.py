@@ -3,14 +3,12 @@ import ecdsa
 import codecs
 import binascii
 import base58
-import math
-import struct
-
-from enum import Enum
 
 from key_generator import KeyGenerator
 from globals import WALLET_PRIVKEY_FILE, NETWORKS
 from colored_print import prRed
+
+import utxo_set
 
 import bech32
 
@@ -34,6 +32,15 @@ class Wallet:
             print(key)
         del key
         del keygen
+
+    @staticmethod
+    def get_balance(address):
+        balance = 0
+        utxo = utxo_set.Utxo.get_utxo_of_addr(address)
+        if utxo:
+            for u in utxo:
+                balance += u['value']
+        return balance
 
     @staticmethod
     def base58(address_hex):
@@ -104,7 +111,7 @@ class Wallet:
         ripemd160 = hashlib.new('ripemd160')
         ripemd160.update(sha256.digest())
         witprog = ripemd160.digest()
-        print(witprog.hex())
+        # print(witprog.hex())
 
         bech32_addr = bech32.encode(hrp, witver, witprog)
         return bech32_addr
@@ -178,8 +185,7 @@ class Wallet:
         if y % 2 != y_parity:
             y = -y % p
         uncompressed_key = '04{:x}{:x}'.format(x, y)
-        print(uncompressed_key)
-
+        return uncompressed_key
 
     @staticmethod
     def sign_message(message, private_key):
@@ -209,18 +215,3 @@ class Wallet:
     def verify_message(message, public_key, signature):
         vk = ecdsa.VerifyingKey.from_string(bytes.fromhex(public_key[2:]), curve=ecdsa.SECP256k1)
         return (vk.verify(bytes.fromhex(signature), message.encode('utf-8')))
-
-prkey = 'fb6cd59c1c9d8113eed551cf92e565f80cc646eb0a895792831496f421cf5fed'
-
-pbk = Wallet.private_to_public(prkey)
-print(pbk)
-pbk_c = Wallet.compressed_publkey_from_publkey(pbk)
-Wallet.bech32_address_from_compressed_publkey(pbk_c, NETWORKS.BITCOIN)
-print(pbk_c)
-sw_address = 'bc1qfxdgu3tt6x5jpls9s6y3nzk9f7yjczwvn6wetl'
-wtf, pbk_hash = bech32.decode('bc', sw_address)
-print(pbk_hash)
-hex_str = "".join(list(map('{:02x}'.format, pbk_hash)))
-
-print(hex_str)
-after_decode = '[73, 154, 142, 69, 107, 209, 169, 32, 254, 5, 134, 137, 25, 138, 197, 79, 137, 44, 9, 204]'

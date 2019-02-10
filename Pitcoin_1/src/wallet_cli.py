@@ -5,25 +5,23 @@ import requests
 from pyfiglet import Figlet
 
 from key_generator import KeyGenerator
-from wallet import Wallet
+import wallet
 from transaction import Transaction
 from utxo_set import Utxo
-from tx import RawTransaction, SwRawTransaction, SwRawTransactionMultInputs
+from tx import SwRawTransactionMultInputs
 from tx_validator import transaction_validation
-from serializer import Serializer, Deserializer
-from blockchain import Blockchain
+from serializer import Serializer
 from colored_print import *
 from globals import (
     TRANSACTIONS_POOL,
     PENDING_POOL_FILE,
+    SW_TRANSACTIONS_POOL,
     WALLET_PRIVKEY_FILE,
     WALLET_ADDRESS_FILE,
     WALLET_SEGWIT_ADDRESS_FILE,
     WALLET_SEGWIT_PRIVKEY_FILE,
     NETWORKS
 )
-
-from tx import SwRawTransaction
 
 # TODO: Fix wallet balance
 
@@ -56,7 +54,7 @@ class WalletCli(cmd.Cmd):
         prPurple('private key:')
         prLightPurple(private_key)
         prPurple('address:')
-        address = Wallet.private_key_to_addr(private_key)
+        address = w.private_key_to_addr(private_key)
         prLightPurple(address)
         f = open(WALLET_ADDRESS_FILE, 'w')
         f.write(address)
@@ -65,13 +63,13 @@ class WalletCli(cmd.Cmd):
     def do_balance(self, args):
         if args and len(args.split(' ')) == 1:
             address = args
-            balance = 0
-            utxo = Utxo.get_utxo_of_addr(address)
-            if not utxo:
-                prPurple("No utxo of this address")
-                return
-            for u in utxo:
-                balance += u['value']
+            balance = w.get_balance(address)
+            # utxo = Utxo.get_utxo_of_addr(address)
+            # if not utxo:
+            #     prPurple("No utxo of this address")
+            #     return
+            # for u in utxo:
+            #     balance += u['value']
             prPurple("Balance of address " + address + " is " + str(balance) + " coins")
 
     def do_import(self, args):
@@ -89,11 +87,11 @@ class WalletCli(cmd.Cmd):
         wif_key = out_file.read()
         out_file.close()
 
-        priv_key = Wallet.WIF_to_priv(wif_key)
+        priv_key = w.WIF_to_priv(wif_key)
         prPurple('private key:')
         prLightPurple(priv_key)
         prPurple('address:')
-        address = Wallet.private_key_to_addr(priv_key)
+        address = w.private_key_to_addr(priv_key)
         prLightPurple(address)
 
         in_file = open(WALLET_ADDRESS_FILE, 'w')
@@ -131,9 +129,9 @@ class WalletCli(cmd.Cmd):
 
 
 
-        privkey = Wallet.WIF_to_priv(privkey_wif)
+        privkey = w.WIF_to_priv(privkey_wif)
 
-        sign, publkey = Wallet.sign_message(tx_hash, privkey)
+        sign, publkey = w.sign_message(tx_hash, privkey)
 
         tx_serialized = Serializer.serialize(tx.amount, tx.sender_address, tx.recipient_address, publkey, sign)
         transaction_validation(tx_serialized, tx_hash)
@@ -154,9 +152,9 @@ class WalletCli(cmd.Cmd):
 
             while True:
                 tx = f.readline()
-                rf.write(tx)
                 if not tx:
                     break
+                rf.write(tx)
                 tx_payload['transactions'].append(tx)
             f.close()
             rf.close()
@@ -214,7 +212,7 @@ class WalletCli(cmd.Cmd):
         prPurple('raw private key:')
         prLightPurple(private_key)
         prPurple('segwit address:')
-        swaddress = Wallet.bech32_addr_from_privkey(private_key, network)
+        swaddress = wallet.Wallet.bech32_addr_from_privkey(private_key, network)
         prLightPurple(swaddress)
 
         # Write new address to file
@@ -222,7 +220,7 @@ class WalletCli(cmd.Cmd):
         f.write(swaddress)
         f.close()
 
-        privkey_wif = Wallet.priv_to_WIF(private_key)
+        privkey_wif = wallet.Wallet.priv_to_WIF(private_key)
 
         # Write privkey in WIF to file
         f = open(WALLET_SEGWIT_PRIVKEY_FILE, 'w')
@@ -232,7 +230,7 @@ class WalletCli(cmd.Cmd):
     def do_swsend(self, args):
         """send transaction\nFormat: send <% Recipient Address %>, <% Amount %>"""
 
-        if not args or len(args.split(' ')) != 3:
+        if not args or len(args.split(' ')) != 2:
             prRed(
                 "usage:\n"
                 + "send transaction\nFormat: send <% Recipient Address %>, <% Amount %>"
@@ -260,9 +258,37 @@ class WalletCli(cmd.Cmd):
                                                out_value=50,
                                                miner_fee=0,
                                                locktime=0)
-            print(sw_tx.raw_tx().hex())
+            print(sw_tx.get_raw_transaction(hex=True))
+            f = open(SW_TRANSACTIONS_POOL, 'a+')
+            f.write(sw_tx.get_raw_transaction(hex=True) + '\n')
+            f.close()
         # sw_tx = SwRawTransaction(1, privkey_wif, sender_addr, )
 
+    def do_swbroadcast(self, args):
+        url = 'http://' + str(server.ip) + ':' + str(server.port) + '/transaction/new'
+
+        tx_payload = {'transactions': []}
+
+        try:
+            f = open(SW_TRANSACTIONS_POOL, 'r')
+            rf = open(PENDING_POOL_FILE, 'a+')
+
+            while True:
+                tx = f.readline()
+                if not tx:
+                    break
+                rf.write(tx)
+                tx_payload['transactions'].append(tx)
+            f.close()
+            rf.close()
+            headers = {"Content-Type": "application/json"}
+            r = requests.post(url, json=tx_payload, headers=headers)
+            prGreen("Transactions successfully broadcasted")
+
+
+        except Exception as e:
+            prRed('Broadcast Error:')
+            prRed(e)
 
     def default(self, line):
         prRed('Wrong command')

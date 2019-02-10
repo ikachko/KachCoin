@@ -2,19 +2,13 @@ import hashlib
 import base58
 import ecdsa
 import struct
+
 import bech32
 
-from wallet import Wallet
+import wallet
 
 from serializer import make_varint, get_varint
-input_amount = 850000
-output_amount = 100000
-fee = 50000
-sender_address = "mv3d5P4kniPrT5owreux438yEtcFUefo71"
-sender_compressed_pub = "02C3C6A89E01B4B62621233C8E0C2C26078A2449ABAA837E18F96A1F65D7B8CC8C"
-sender_wif_priv = "5JrJuxQ5QhLASMpQgSCZ9Fmzt8Sit8X3h1N9LGWYdXDtBhUxCwB"
-recipient_address = "n3Jqa2cyGqKDvc8QNMKYooy5yYUqoGwrvi"
-prev_txid = "3e2ca1d97f66b5a2b2b376daff44c6345c5877001f01eb7797c86fdbd93282d9"
+from colored_print import *
 
 
 def flip_byte_order(string):
@@ -101,6 +95,7 @@ def raw_deserialize(raw_tx):
 
     return raw_dict
 
+
 class SwRawTransactionMultInputs:
     def __init__(self,
                  version: int,
@@ -112,8 +107,8 @@ class SwRawTransactionMultInputs:
                  miner_fee: int,
                  locktime: int
                  ):
-        raw_privkey = Wallet.WIF_to_priv(sender_priv_wif)
-        sender_pubkey_compressed = Wallet.compressed_publkey_from_publkey(Wallet.private_to_public(raw_privkey))
+        raw_privkey = wallet.Wallet.WIF_to_priv(sender_priv_wif)
+        sender_pubkey_compressed = wallet.Wallet.compressed_publkey_from_publkey(wallet.Wallet.private_to_public(raw_privkey))
 
         self.version = struct.pack("<L", version)
         self.marker = struct.pack("<B", 0)
@@ -143,13 +138,13 @@ class SwRawTransactionMultInputs:
                              miner_fee):
 
         my_address = sender_addr
-        my_hashed_pubkey = Wallet.get_hashed_pbk_from_addr(my_address)
+        my_hashed_pubkey = wallet.Wallet.get_hashed_pbk_from_addr(my_address)
 
         my_private_key = sender_priv_wif
         my_private_key_hex = base58.b58decode_check(my_private_key)[1:33].hex()
 
         recipient = recipient_addr
-        recipient_hashed_pubkey = Wallet.get_hashed_pbk_from_addr(recipient)
+        recipient_hashed_pubkey = wallet.Wallet.get_hashed_pbk_from_addr(recipient)
 
         # form tx_out
         self.tx_out1["value"] = struct.pack("<Q", out_value)
@@ -160,7 +155,7 @@ class SwRawTransactionMultInputs:
         for i in inputs:
             input_value += i['value']
 
-        return_value = input_value - output_amount - miner_fee  # 1000 left as fee
+        return_value = input_value - out_value - miner_fee  # 1000 left as fee
         self.tx_out2["value"] = struct.pack("<Q", return_value)
         self.tx_out2["pk_script"] = bytes.fromhex("76a914%s88ac" % my_hashed_pubkey)
         self.tx_out2["pk_script_bytes"] = struct.pack("<B", len(self.tx_out2["pk_script"]))
@@ -183,6 +178,7 @@ class SwRawTransactionMultInputs:
                     msg_for_sign += script
                 else:
                     msg_for_sign += struct.pack("<B", 0)
+                msg_for_sign += bytes.fromhex("ffffffff")
             msg_for_sign += self.tx_out_count
             msg_for_sign += self.tx_out1["value"]
             msg_for_sign += self.tx_out1["pk_script_bytes"]
@@ -195,33 +191,41 @@ class SwRawTransactionMultInputs:
 
             hashed_tx_to_sign = hashlib.sha256(hashlib.sha256(msg_for_sign).digest()).digest()
             sk = ecdsa.SigningKey.from_string(pk_bytes, curve=ecdsa.SECP256k1)
-            signature = sk.sign_digest(hashed_tx_to_sign, sigencode=ecdsa.util.sigencode_der_canonize())
+            signature = sk.sign_digest(hashed_tx_to_sign, sigencode=ecdsa.util.sigencode_der_canonize)
 
             pk_bytes_hex = sender_pubkey_compressed
 
             witness = (
-                struct.pack("<B", len(signature) + 1)
+                bytes.fromhex(make_varint(len(signature)))
                 + signature
-                + b'\01'
-                + struct.pack("<B", len(bytes.fromhex(pk_bytes_hex)))
+                + bytes.fromhex(make_varint(len(bytes.fromhex(pk_bytes_hex))))
                 + bytes.fromhex(pk_bytes_hex)
             )
             witnesses.append(witness)
 
         bytes_witnesses = b''
+
+        i = 0
         for w in witnesses:
+            if i % 2 == 0:
+                bytes_witnesses += bytes.fromhex(make_varint(2))
             bytes_witnesses += w
+            i += 1
+
+        tx_out_serialize = b''
+
+        for i in range(len(inputs)):
+            tx_out_serialize += bytes.fromhex(flip_byte_order(inputs[i]['txid']))
+            tx_out_serialize += struct.pack("<L", i)
+            tx_out_serialize += struct.pack("<B", 0)
+            tx_out_serialize += bytes.fromhex("ffffffff")
 
         real_tx = (
                 self.version
                 + self.marker
                 + self.flag
                 + self.tx_in_count
-                + self.tx_in["tx_out_hash"]
-                + self.tx_in["tx_out_index"]
-                + struct.pack("<B", 0)
-                # + struct.pack("<B", 0)
-                + self.tx_in["sequence"]
+                + tx_out_serialize
                 + self.tx_out_count
                 + self.tx_out1["value"]
                 + self.tx_out1["pk_script_bytes"]
@@ -229,8 +233,6 @@ class SwRawTransactionMultInputs:
                 + self.tx_out2["value"]
                 + self.tx_out2["pk_script_bytes"]
                 + self.tx_out2["pk_script"]
-                + struct.pack("<B", len(inputs) + 1)  # Num of inputs
-                + struct.pack("<B", len(witnesses) + 1)
                 + bytes_witnesses
                 + self.lock_time
         )
@@ -247,7 +249,6 @@ class SwRawTransactionMultInputs:
                 return self.raw_tx
 
 
-
 class SwRawTransaction:
     def __init__(self,
                  version: int,
@@ -260,8 +261,8 @@ class SwRawTransaction:
                  miner_fee: int,
                  locktime: int
                  ):
-        raw_privkey = Wallet.WIF_to_priv(sender_priv_wif)
-        sender_pubkey_compressed = Wallet.compressed_publkey_from_publkey(Wallet.private_to_public(raw_privkey))
+        raw_privkey = wallet.Wallet.WIF_to_priv(sender_priv_wif)
+        sender_pubkey_compressed = wallet.Wallet.compressed_publkey_from_publkey(wallet.Wallet.private_to_public(raw_privkey))
 
         self.version = struct.pack("<L", version)
         self.marker = struct.pack("<B", 0)
@@ -315,7 +316,7 @@ class SwRawTransaction:
         self.tx_out1["pk_script"] = bytes.fromhex("76a914%s88ac" % recipient_hashed_pubkey)
         self.tx_out1["pk_script_bytes"] = struct.pack("<B", len(self.tx_out1["pk_script"]))
 
-        return_value = input_value - output_amount - miner_fee  # 1000 left as fee
+        return_value = input_value - out_value - miner_fee  # 1000 left as fee
         self.tx_out2["value"] = struct.pack("<Q", return_value)
         self.tx_out2["pk_script"] = bytes.fromhex("76a914%s88ac" % my_hashed_pubkey)
         self.tx_out2["pk_script_bytes"] = struct.pack("<B", len(self.tx_out2["pk_script"]))
@@ -375,7 +376,7 @@ class SwRawTransaction:
                 + self.tx_out2["value"]
                 + self.tx_out2["pk_script_bytes"]
                 + self.tx_out2["pk_script"]
-                + struct.pack("<B", (1) + 1) # Num of inputs
+                + struct.pack("<B", (1) + 1)  # Num of inputs
                 + struct.pack("<B", len(signature) + 1)
                 + witness
                 + self.lock_time
@@ -392,6 +393,7 @@ class SwRawTransaction:
 
 
 class SwCoinbaseTransaction(SwRawTransaction):
+
     def __init__(self,
                  version: int,
                  recipient_hashed_pbk: str,
@@ -450,6 +452,7 @@ class SwCoinbaseTransaction(SwRawTransaction):
         )
         return real_tx
 
+
 class RawTransaction:
     def __init__(self,
                  version: int,
@@ -461,8 +464,8 @@ class RawTransaction:
                  out_value: int,
                  miner_fee: int,
                  locktime: int):
-        raw_privkey = Wallet.WIF_to_priv(sender_priv_wif)
-        sender_pubkey_compressed = Wallet.compressed_publkey_from_publkey(Wallet.private_to_public(raw_privkey))
+        raw_privkey = wallet.Wallet.WIF_to_priv(sender_priv_wif)
+        sender_pubkey_compressed = wallet.Wallet.compressed_publkey_from_publkey(wallet.Wallet.private_to_public(raw_privkey))
         self.version = struct.pack("<L", version)
         self.tx_in_count = struct.pack("<B", 1)
         self.tx_in = {}  # TEMP
@@ -523,7 +526,7 @@ class RawTransaction:
         self.tx_out1["pk_script"] = bytes.fromhex("76a914%s88ac" % recipient_hashed_pubkey)
         self.tx_out1["pk_script_bytes"] = struct.pack("<B", len(self.tx_out1["pk_script"]))
 
-        return_value = input_value - output_amount - miner_fee  # 1000 left as fee
+        return_value = input_value - out_value - miner_fee  # 1000 left as fee
         self.tx_out2["value"] = struct.pack("<Q", return_value)
         self.tx_out2["pk_script"] = bytes.fromhex("76a914%s88ac" % my_hashed_pubkey)
         self.tx_out2["pk_script_bytes"] = struct.pack("<B", len(self.tx_out2["pk_script"]))

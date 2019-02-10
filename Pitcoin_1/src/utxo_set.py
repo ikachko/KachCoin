@@ -5,6 +5,7 @@ import base58
 from globals import UTXO_POOL_FILE
 from colored_print import *
 from tx import raw_deserialize
+import wallet
 
 class Utxo:
     def __init__(self):
@@ -61,7 +62,8 @@ class Utxo:
     def get_utxo_of_addr(addr):
         try:
             txs = Utxo.get_txs_from_utxo_file()
-            hashed_pubkey = base58.b58decode_check(addr)[1:].hex()
+            txs = list(filter(None, txs))
+            hashed_pubkey = wallet.Wallet.get_hashed_pbk_from_addr(addr)
             if not txs:
                 prRed("Something wrong with utxo pool or it is empty")
             else:
@@ -157,10 +159,10 @@ addr = '5KWkjDCpMQYasUykLvKpCuZXThd9VQHunRitAA1U8iXQtwohc2H'
 hashed_key = 'df95714eeeabaf42dd0338d4ff694b87d4697b1ce8bbc7294bbddd980e7bdc83'
 # print(Utxo.get_inputs(miner_addr, 50))
 
-from wallet import *
-uncompressed_pbk = Wallet.private_to_public('a8abac3ca5a30557b92752251cedf86119fb99b7d60620afaf95ec72eefdb4de')
-print(uncompressed_pbk)
-compressed_pbk = Wallet.compressed_publkey_from_publkey(uncompressed_pbk)
-print(compressed_pbk)
-uncompressed_again = Wallet.uncompress_publkey(compressed_pbk)
-print(uncompressed_again)
+# from wallet import *
+# uncompressed_pbk = Wallet.private_to_public('a8abac3ca5a30557b92752251cedf86119fb99b7d60620afaf95ec72eefdb4de')
+# print(uncompressed_pbk)
+# compressed_pbk = Wallet.compressed_publkey_from_publkey(uncompressed_pbk)
+# print(compressed_pbk)
+# uncompressed_again = Wallet.uncompress_publkey(compressed_pbk)
+# print(uncompressed_again)

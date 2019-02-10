@@ -38,7 +38,7 @@ class Block:
                 "".join(self.transactions) +
                 self.merkle_root
         ).encode('utf-8')
-        hash_s = hashlib.sha256(s).digest().hex()
+        hash_s = hashlib.sha256(s).hexdigest()
         return hash_s
 
     def block_header(self):

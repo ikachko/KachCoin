@@ -210,25 +210,25 @@ def execute_stack(commands):
     return stack
 
 
-prkey = '40a5911c18651321e23d845287d084e76d99d53ffc0ca86ef1a0ac711efd05f5'
-pubkey = '046b8fd99422ec9915b20e8481b58fbba527f8dd2e15725025a8b7545773d8d433b73e572c8bc740ca5185fb92e88404aca9c884de96614be75e06b336693870e3'
-pubKeyHash = hash160(pubkey)
-message = "AAAAAAAAAAAAAA"
-
-sig, public_key = Wallet.sign_message(message, prkey)
-
-address = '1NaTVwXDDUJaXDQajoa9MqHhz4uTxtgK14'
-
-scriptPubKeyList = [hex(OP_DUP), hex(OP_HASH160), pubKeyHash, hex(OP_EQUALVERIFY), hex(OP_CHECKSIG)]
-scriptSigList = [message, sig, public_key]
-
-scriptList = scriptSigList + scriptPubKeyList
-script = ' '.join(scriptList)
-
-# stack = lexer(script)
-# res = execute_stack(stack)
-# print(res)
-
-script_str = '9a01fd3046022100b408d547ffe841d869e8287414930600ce43bc68827b41c703a36539772ad53b0221008e5bb700fa4163cbb11af95c6b9dc50a8c8f6a1dd700dba2ac296645cf9dc932303182303466386132353665323631383664653561626634373337356437333730333466303034376166653530393330623532306466363831636636323061366238616464366531343131366139333333656266633639353734376561666534396637373732306533623335643031336639336430636139346236653166363134666263313276a914e6cb7a9ee8ced98297292b40aadadc964ad1e60688ac'
-script_list = lexer(script_str)
-print(script_list)
+# prkey = '40a5911c18651321e23d845287d084e76d99d53ffc0ca86ef1a0ac711efd05f5'
+# pubkey = '046b8fd99422ec9915b20e8481b58fbba527f8dd2e15725025a8b7545773d8d433b73e572c8bc740ca5185fb92e88404aca9c884de96614be75e06b336693870e3'
+# pubKeyHash = hash160(pubkey)
+# message = "AAAAAAAAAAAAAA"
+#
+# sig, public_key = Wallet.sign_message(message, prkey)
+#
+# address = '1NaTVwXDDUJaXDQajoa9MqHhz4uTxtgK14'
+#
+# scriptPubKeyList = [hex(OP_DUP), hex(OP_HASH160), pubKeyHash, hex(OP_EQUALVERIFY), hex(OP_CHECKSIG)]
+# scriptSigList = [message, sig, public_key]
+#
+# scriptList = scriptSigList + scriptPubKeyList
+# script = ' '.join(scriptList)
+#
+# # stack = lexer(script)
+# # res = execute_stack(stack)
+# # print(res)
+#
+# script_str = '9a01fd3046022100b408d547ffe841d869e8287414930600ce43bc68827b41c703a36539772ad53b0221008e5bb700fa4163cbb11af95c6b9dc50a8c8f6a1dd700dba2ac296645cf9dc932303182303466386132353665323631383664653561626634373337356437333730333466303034376166653530393330623532306466363831636636323061366238616464366531343131366139333333656266633639353734376561666534396637373732306533623335643031336639336430636139346236653166363134666263313276a914e6cb7a9ee8ced98297292b40aadadc964ad1e60688ac'
+# script_list = lexer(script_str)
+# print(script_list)
