@@ -5,8 +5,13 @@ import binascii
 import base58
 
 from key_generator import KeyGenerator
-from globals import WALLET_PRIVKEY_FILE
+from globals import WALLET_PRIVKEY_FILE, NETWORKS
 from colored_print import prRed
+
+import utxo_set
+
+import bech32
+
 class Wallet:
     def __init__(self, seed=None, key_to_file=False):
         self.__create_priv_key(seed, key_to_file)
@@ -27,6 +32,15 @@ class Wallet:
             print(key)
         del key
         del keygen
+
+    @staticmethod
+    def get_balance(address):
+        balance = 0
+        utxo = utxo_set.Utxo.get_utxo_of_addr(address)
+        if utxo:
+            for u in utxo:
+                balance += u['value']
+        return balance
 
     @staticmethod
     def base58(address_hex):
@@ -83,6 +97,26 @@ class Wallet:
         return address
 
     @staticmethod
+    def bech32_address_from_compressed_publkey(compressed_publkey, network):
+        if network is NETWORKS.BITCOIN:
+            hrp = 'bc'
+        elif network is NETWORKS.TESTNET:
+            hrp = 'tb'
+        else:
+            prRed("bech32_address_from_compressed_publkey:\n[WRONG NETWORK TYPE]")
+            return
+        witver = 0
+
+        sha256 = hashlib.sha256(bytes.fromhex(compressed_publkey))
+        ripemd160 = hashlib.new('ripemd160')
+        ripemd160.update(sha256.digest())
+        witprog = ripemd160.digest()
+        # print(witprog.hex())
+
+        bech32_addr = bech32.encode(hrp, witver, witprog)
+        return bech32_addr
+
+    @staticmethod
     def private_key_to_addr(key):
         return Wallet.public_key_to_addr(Wallet.private_to_public(key))
 
@@ -115,8 +149,43 @@ class Wallet:
         try:
             publkey_hash = base58.b58decode_check(address)[1:].hex()
         except Exception as e:
+            prRed("publkey_hash_from_addr:")
             prRed(e)
         return publkey_hash
+
+    @staticmethod
+    def compressed_publkey_from_publkey(publkey):
+        raw_key = publkey[2:]
+
+        x_key = raw_key[0:int(len(raw_key)/2)]
+        y_key = raw_key[int(len(raw_key)/2):]
+
+        if int(y_key, 16) % 2 == 0:
+            prefix = '02'
+        else:
+            prefix = '03'
+        compressed_key = prefix + x_key
+        return compressed_key
+
+    @staticmethod
+    def uncompress_publkey(compressed_publkey):
+        def pow_mod(x, y, z):
+            number = 1
+            while y:
+                if y & 1:
+                    number = number * x % z
+                y >>= 1
+                x = x * x % z
+            return number
+        p = 0xfffffffffffffffffffffffffffffffffffffffffffffffffffffffefffffc2f
+        y_parity = int(compressed_publkey[:2]) - 2
+        x = int(compressed_publkey[2:], 16)
+        a = (pow_mod(x, 3, p) + 7) % p
+        y = pow_mod(a, (p + 1) // 4, p)
+        if y % 2 != y_parity:
+            y = -y % p
+        uncompressed_key = '04{:x}{:x}'.format(x, y)
+        return uncompressed_key
 
     @staticmethod
     def sign_message(message, private_key):
@@ -124,6 +193,23 @@ class Wallet:
         sk = ecdsa.SigningKey.from_string(key_bytes, curve=ecdsa.SECP256k1)
         signed_msg = sk.sign(message.encode('utf-8'))
         return (signed_msg.hex(), Wallet.private_to_public(private_key))
+
+    @staticmethod
+    def get_hashed_pbk_from_addr(addr):
+        a = addr
+        if a[0:2] in ('bc', 'tb'):
+            lul, decoded = bech32.decode(a[0:2], a)
+            hashed_pbk = "".join(list(map('{:02x}'.format, decoded)))
+        else:
+            hashed_pbk = base58.b58decode_check(a)[1:].hex()
+        return hashed_pbk
+
+    @staticmethod
+    def bech32_addr_from_privkey(privkey, network):
+        publkey = Wallet.private_to_public(privkey)
+        compressed_publkey = Wallet.compressed_publkey_from_publkey(publkey)
+        bech32_addr = Wallet.bech32_address_from_compressed_publkey(compressed_publkey, network)
+        return bech32_addr
 
     @staticmethod
     def verify_message(message, public_key, signature):

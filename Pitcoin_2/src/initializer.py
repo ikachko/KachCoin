@@ -5,11 +5,13 @@ from flask import (Flask,
 
 from blockchain import Blockchain
 from colored_print import prRed
+from wallet import Wallet
 
 from globals import (
     PENDING_POOL_FILE,
     MINER_NODES,
-    MINER_NETWORK_DATA
+    MINER_NETWORK_DATA,
+    DIFFICULTY_FILE
 )
 
 # TODO: Server config file
@@ -77,6 +79,12 @@ def get_chain():
     json_chain = json.dumps(dict_chain)
     return json_chain
 
+@node.route('/getDifficulty', methods=['GET'])
+def get_blockchain_difficulty():
+    f = open(DIFFICULTY_FILE)
+    blockchain_difficulty = f.read()
+    f.close()
+    return json.dumps(blockchain_difficulty)
 
 @node.route('/chain/length', methods=['GET'])
 def get_chain_length():
@@ -85,20 +93,29 @@ def get_chain_length():
     return json_length
 
 
-@node.route('/block/last', methods=['GET'])
-def get_last_block():
-    height = request.args.get('height')
+@node.route('/block/', methods=['GET'])
+def get_n_block():
+    height = int(request.args.get('height'))
     if height:
         block = Blockchain.get_n_block(height)
     else:
         block = Blockchain.get_n_block(last=True)
-    return block
+    json_block = json.dumps(block.to_dict())
+    return json_block
+
+
+@node.route('/block/last', methods=['GET'])
+def get_last_block():
+    block = Blockchain.get_n_block(last=True)
+    json_block = json.dumps(block.to_dict())
+    return json_block
 
 
 @node.route('/balance', methods=['GET'])
 def get_balance():
-    im_sorry = "IN PROGRESS"
-    return im_sorry
+    addr = request.args.get('address')
+    balance = Wallet.get_balance(addr)
+    return str(balance)
 
 
 def get_miner_ip_and_port():
@@ -110,6 +127,14 @@ def get_miner_ip_and_port():
         return read_ip, read_port
     except Exception as e:
         print(e)
+
+
+def main():
+    ip, port = get_miner_ip_and_port()
+    if not ip or not port:
+        prRed("INVALID ./miner_data/network_data")
+    else:
+        node.run(host=ip, port=port, debug=True)
 
 
 if __name__ == "__main__":

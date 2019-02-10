@@ -1,6 +1,7 @@
 import cmd
 import time
 import json
+import signal
 
 from pyfiglet import Figlet
 
@@ -11,12 +12,14 @@ from transaction import CoinbaseTransaction
 from wallet import Wallet
 from serializer import Serializer
 
+from tx import SwCoinbaseTransaction
+
 from globals import (
     BLOCKS_DIRECTORY,
     MINER_NODES,
-    MINER_PRIVKEY_FILE
+    MINER_PRIVKEY_FILE,
+    NETWORKS
 )
-
 
 class MinerCli(cmd.Cmd):
 
@@ -33,6 +36,18 @@ class MinerCli(cmd.Cmd):
         self.blockchain = Blockchain()
         self.chain = Blockchain.recover_blockchain_from_fileblock()
         self.nodes = Blockchain.recover_nodes_from_file()
+
+    def do_show_miner_data(self, args):
+        try:
+            f = open(MINER_PRIVKEY_FILE, 'r')
+            privkey = f.read().replace('\n', '')
+            f.close()
+            miner_bech_addr = Wallet.bech32_addr_from_privkey(privkey, NETWORKS.BITCOIN)
+            prLightPurple("Miner bech32 addr : [" + miner_bech_addr + "]")
+            miner_addr = Wallet.private_key_to_addr(privkey)
+            prLightPurple("Miner raw addr: [" + miner_addr + "]")
+        except Exception as e:
+            prRed(e)
 
     def do_show_blocks(self, args):
         i = 0
@@ -95,6 +110,52 @@ class MinerCli(cmd.Cmd):
         nodes = Blockchain.recover_nodes_from_file()
         prLightPurple(nodes)
 
+    def prepare_mine_swblock(self):
+        block_txs = []
+        pool_txs = Blockchain.get_transactions_to_block()
+        if pool_txs != ['']:
+            block_txs.append(pool_txs)
+
+        f = open(MINER_PRIVKEY_FILE, 'r')
+        miner_privkey = f.read()
+        f.close()
+
+        miner_privkey = miner_privkey.replace('\n', '')
+
+        miner_hashed_pbk = Wallet.get_hashed_pbk_from_addr(Wallet.bech32_addr_from_privkey(miner_privkey, NETWORKS.BITCOIN))
+        coinbase = SwCoinbaseTransaction(1, miner_hashed_pbk, 0)
+
+        raw_coinbase_tx = coinbase.get_raw_transaction(hex=True)
+        block_txs.append(raw_coinbase_tx)
+
+        last_block = Blockchain.get_n_block(last=True)
+        last_block_h = last_block.hash_block()
+
+        timestamp = int(time.time())
+
+        new_block = Block(version=1, bits=2, previous_hash=last_block_h, transactions=block_txs, timestamp=timestamp)
+
+        return new_block
+
+    def do_automine(self, args):
+        try:
+            while True:
+                self.do_mine(args)
+        except KeyboardInterrupt:
+            prGreen('Mining ended')
+
+    def do_mine(self, args):
+
+        new_block = self.prepare_mine_swblock()
+        # prPurple("Mining starting")
+        h, block = self.blockchain.mine(new_block)
+        # prGreen("MINED")
+        # prPurple('height : ' + str(len(self.blockchain.chain)))
+        # prPurple('nonce : ' + str(block.nonce))
+        #
+        # prPurple('hash : ' + h)
+        # print(new_block.to_dict())
+
     def prepare_miner_block(self, args):
         if args:
             args_splitted = args.split(' ')
@@ -108,7 +169,6 @@ class MinerCli(cmd.Cmd):
             f.close()
         transactions = Blockchain.get_transactions_to_block()
 
-
         miner_privkey = Wallet.WIF_to_priv(miner_privkey_wif)
 
         coinbase = CoinbaseTransaction()
@@ -117,7 +177,6 @@ class MinerCli(cmd.Cmd):
         coinbase_hash = coinbase.transaction_hash()
 
         sign, publkey = Wallet.sign_message(coinbase_hash, miner_privkey)
-
         serialized_coinbase = Serializer.serialize(coinbase.amount,
                                                    coinbase.sender_address,
                                                    coinbase.recipient_address,
@@ -136,21 +195,21 @@ class MinerCli(cmd.Cmd):
 
         return new_block
 
-    def do_mine(self, args):
-        if args:
-            args_splitted = args.split(' ')
-            privkey_addr = args_splitted[0]
-            new_block = self.prepare_miner_block(privkey_addr)
-        else:
-            new_block = self.prepare_miner_block(None)
-        prPurple("Mining starting")
-        h, block = self.blockchain.mine(new_block)
-        prGreen("MINED")
-        prPurple('height : ' + str(len(self.chain)))
-        prPurple('nonce : ' + str(block.nonce))
-
-        prPurple('hash : ' + h)
-        self.chain.append(block)
+    # def do_mine(self, args):
+    #     if args:
+    #         args_splitted = args.split(' ')
+    #         privkey_addr = args_splitted[0]
+    #         new_block = self.prepare_miner_block(privkey_addr)
+    #     else:
+    #         new_block = self.prepare_miner_block(None)
+    #     prPurple("Mining starting")
+    #     h, block = self.blockchain.mine(new_block)
+    #     prGreen("MINED")
+    #     prPurple('height : ' + str(len(self.blockchain.chain)))
+    #     prPurple('nonce : ' + str(block.nonce))
+    #
+    #     prPurple('hash : ' + h)
+    #     self.blockchain.chain.append(block)
 
 
 if __name__ == '__main__':

@@ -1,17 +1,41 @@
-PENDING_POOL_FILE = '../pending_pool'
+import os
 
-BLOCKS_DIRECTORY = '../blocks/'
+project_path = os.path.dirname(os.path.realpath(__file__))
 
-BLOCKS_LENGTH_FILE = '../blocks/length'
+path_dirs = project_path.split('/')
+project_path = "/".join(path_dirs[:-1])
 
-MINER_NODES = '../miner_data/nodes'
+BLOCKS_DIRECTORY = project_path + '/blocks/'
 
-MINER_NETWORK_DATA = '../miner_data/network_data'
+BLOCKS_LENGTH_FILE = project_path + '/blocks/length'
 
-MINER_PRIVKEY_FILE = '../miner_data/privkey.wif'
+MINER_NODES = project_path + '/miner_data/nodes'
 
-TRANSACTIONS_POOL = '../transactions'
+MINER_NETWORK_DATA = project_path + '/miner_data/network_data'
 
-WALLET_PRIVKEY_FILE = '../privkey.wif'
+MINER_PRIVKEY_FILE = project_path + '/miner_data/privkey.wif'
 
-WALLET_ADDRESS_FILE = '../address'
+PENDING_POOL_FILE = project_path + '/pending_pool'
+
+TRANSACTIONS_POOL = project_path + '/transactions'
+
+SW_TRANSACTIONS_POOL = project_path + '/sw_transactions'
+
+WALLET_PRIVKEY_FILE = project_path + '/privkey.wif'
+
+WALLET_ADDRESS_FILE = project_path + '/address'
+
+WALLET_SEGWIT_ADDRESS_FILE = project_path + '/sw_address'
+
+WALLET_SEGWIT_PRIVKEY_FILE = project_path + '/sw_privkey.wif'
+
+UTXO_POOL_FILE = project_path + '/utxo_pool.db'
+
+DIFFICULTY_FILE = project_path + '/blocks/blockchain_difficulty'
+
+def enum(*args):
+    enums = dict(zip(args, range(len(args))))
+    return type('Enum', (), enums)
+
+
+NETWORKS = enum('BITCOIN', 'TESTNET')

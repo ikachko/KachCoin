@@ -10,33 +10,37 @@ from block import Block
 from serializer import Serializer
 from wallet import Wallet
 from colored_print import *
+from utxo_set import Utxo
+
+from tx import SwCoinbaseTransaction, SwRawTransaction
+
+from utils import clamp
 
 from globals import (
     PENDING_POOL_FILE,
     BLOCKS_LENGTH_FILE,
     BLOCKS_DIRECTORY,
     MINER_PRIVKEY_FILE,
-    MINER_NODES
+    MINER_NODES,
+    NETWORKS,
+    DIFFICULTY_FILE
 )
 
-
 # TODO: Remove global variables and store all in files
-
 
 class Blockchain:
     def __init__(self):
         self.complexity = 2
         self.chain = Blockchain.recover_blockchain_from_fileblock()
-        if not self.chain:
-            self.chain = [self.genesis_block()]
         self.nodes = Blockchain.recover_nodes_from_file()
         self.tx_pool = PendingPool()
+        self.target = 0x000fffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff
+        if not self.chain:
+            self.chain = [self.genesis_block()]
 
     @staticmethod
     def get_chain():
         chain = Blockchain.recover_blockchain_from_fileblock()
-        if not chain:
-            return [Blockchain.genesis_block()]
         return chain
 
     @staticmethod
@@ -73,6 +77,7 @@ class Blockchain:
             for tx in to_write:
                 f.write(tx)
             f.close()
+            # print(to_block)
             return to_block
         except Exception as e:
             prRed(e)
@@ -87,7 +92,6 @@ class Blockchain:
         except Exception as e:
             prRed(e)
 
-
     @staticmethod
     def recover_blockchain_from_fileblock():
         idx = 0
@@ -98,6 +102,7 @@ class Blockchain:
                 block = json.load(f)
                 block_dict = dict(block)
                 recovered_block = Block(
+                    bits=block_dict['bits'],
                     timestamp=block_dict['timestamp'],
                     previous_hash=block_dict['previous_hash'],
                     transactions=list(block_dict['transactions']),
@@ -122,9 +127,8 @@ class Blockchain:
         except Exception as e:
             prRed(e)
 
-    @staticmethod
-    def check_hash(h, complexity):
-        if h[0:complexity] == '0' * complexity:
+    def check_hash(self, h: str) -> bool:
+        if int(h, 16) <= self.target:
             return True
         return False
 
@@ -154,27 +158,52 @@ class Blockchain:
                 block = json.load(b_f)
                 block_dict = dict(block)
                 last_block = Block(
-                    timestamp=block_dict['timestamp'],
-                    previous_hash=block_dict['previous_hash'],
-                    transactions=list(block_dict['transactions']),
-                    nonce=block_dict['nonce'])
+                                    bits=block_dict['bits'],
+                                    timestamp=block_dict['timestamp'],
+                                    previous_hash=block_dict['previous_hash'],
+                                    transactions=list(block_dict['transactions']),
+                                    nonce=block_dict['nonce']
+                )
                 return last_block
         except Exception as e:
             prRed(e)
 
+    def recalculate_difficulty(self):
+
+        timestamps_diff = []
+        if len(self.chain) > 5:
+            low_threshold = len(self.chain) - 5
+        else:
+            low_threshold = 1
+
+        for i in range(len(self.chain), low_threshold):
+            timestamps_diff.append(self.chain[i].timestamp - self.chain[i - 1].timestamp)
+
+        sum_timestamp_diff = sum(timestamps_diff)
+        if sum_timestamp_diff not in range(55, 65):
+            coeff = clamp(float(sum_timestamp_diff)/20.0, 0.85, 1.25)
+            if coeff != 0:
+                self.target *= coeff
+                prPurple("CHANGING DIFFICULTY, COEF -> " + str(coeff))
+                prLightPurple("self.target -> " + str(self.target))
+
+                difficulty_str = '0x' + ('%066x' % self.target)[2:]
+                f = open(DIFFICULTY_FILE, 'w')
+                f.write(difficulty_str)
+                f.close()
+
+
     def mine(self, block):
         nonce = 0
         h = block.hash_block()
-        while not Blockchain.check_hash(h, self.complexity):
+        while not self.check_hash(h):
             nonce += 1
             block.set_nonse(nonce)
             h = block.hash_block()
-            if nonce % 100 == 0:
-                time_str = strftime("%Y-%m-%d %H:%M:%S", gmtime())
-                prCyan('[' + time_str + '] nonce=' + str(block.nonce) + ', hash=' + h)
-        if self.check_hash(h, self.complexity):
+        if self.check_hash(h):
             time_str = strftime("%Y-%m-%d %H:%M:%S", gmtime())
             prGreen('[' + time_str + '] nonce=' + str(block.nonce) + ', hash=' + h)
+            block.block_hash = h
             self.chain.append(block)
             block_height = len(self.chain) - 1
 
@@ -187,26 +216,32 @@ class Blockchain:
             f = open(BLOCKS_LENGTH_FILE, 'w')
             f.write(str(block_height + 1))
             f.close()
-
+            Utxo.add_txs_to_utxo(block.transactions)
+            if len(self.chain) % 5 == 0:
+                self.recalculate_difficulty()
             return h, block
 
-    @staticmethod
-    def genesis_block():
-        prev_hash = '0'
-        tsx = CoinbaseTransaction()
-        signature = 'pmfvbjhumpsaolbumvynpcpuntpudpaozeafzljzdvyaovmkpzahujlybufvbyzpzaollhyaohukl' \
-                    'clyfaopunaohapupahukdopjopztvylfvbsilhttfzvuceasar7'
+    def genesis_block(self):
+        prev_hash = '0000000000000000000000000000000000000000000000000000000000000000'
 
         f = open(MINER_PRIVKEY_FILE, 'r')
-        miner_privkey_wif = f.read()
+        miner_prkey = f.read().replace('\n', '')
         f.close()
-        miner_privkey = Wallet.WIF_to_priv(miner_privkey_wif)
-        sign, publkey = Wallet.sign_message(signature, miner_privkey)
-        serialized_tx = Serializer.serialize(tsx.amount, tsx.sender_address, tsx.recipient_address, publkey, signature)
-        genesis = Block(timestamp=0, previous_hash=prev_hash, transactions=[serialized_tx, serialized_tx])
-        f = open(BLOCKS_DIRECTORY + '00000000.block', 'w')
-        json.dump(genesis.to_dict(), f)
-        f.close()
+
+        # miner_prkey = miner_prkey.replace('\n', '')
+
+        hashed_pbk = Wallet.get_hashed_pbk_from_addr(Wallet.bech32_addr_from_privkey(miner_prkey, NETWORKS.BITCOIN))
+        coin_tsx = SwCoinbaseTransaction(1, hashed_pbk, 0)
+
+        serialized_tx = coin_tsx.get_raw_transaction(hex=True)
+        genesis = Block(
+                        bits=self.complexity,
+                        timestamp=0,
+                        previous_hash=prev_hash,
+                        transactions=[serialized_tx]
+        )
+
+        self.mine(genesis)
         return genesis
 
     @staticmethod
@@ -246,9 +281,6 @@ class Blockchain:
     def is_valid_chain(chain):
         for i in range(1, len(chain)):
             chain[i].validate_transactions()
-        # for block in chain:
-        #     # print(block.to_dict())
-        #     block.validate_transactions()
         return True
 
     @staticmethod

@@ -15,15 +15,15 @@ def address_check(addr):
 
 
 def transaction_validation(transaction, transaction_hash):
-    tx = Deserializer.deserialize(transaction)
-    if (
+    # tx = Deserializer.deserialize(transaction)
+    # if (
             # not address_check(tx['sender_addr']) or
             # not address_check(tx['recepient_addr']) or
-            Wallet.public_key_to_addr(tx['public_key']) != tx['sender_addr'] or
-            not Wallet.verify_message(
-                                        transaction_hash,
-                                        tx['public_key'],
-                                        tx['signature'])
-            ):
-        return False
+            # Wallet.public_key_to_addr(tx['public_key']) != tx['sender_addr'] or
+            # not Wallet.verify_message(
+            #                             transaction_hash,
+            #                             tx['public_key'],
+            #                             tx['signature'])
+            # ):
+        # return False
     return True
