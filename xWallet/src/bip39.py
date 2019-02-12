@@ -1,14 +1,6 @@
 import hashlib
 import secrets
 
-mnemonic_words = [
-    'army', 'van', 'defense',
-    'carry', 'jealous', 'true',
-    'garbage', 'claim', 'echo',
-    'media', 'make', 'crunch'
-]
-
-
 def get_mnemnonic_words():
     f = open('../mnemonic_list_english.txt', 'r')
     words = f.read().split('\n')
@@ -38,15 +30,3 @@ def generate_mnemonic_words():
     for i in range(0, len(entropy_bits), 11):
         words_seed.append(words[int(entropy_bits[i:i+11], 2)])
     return words_seed
-
-
-# w = 'cause claim keep cactus icon space gate enter test cousin real exchange'
-# w_2 = 'army van defense carry jealous true garbage claim echo media make crunch'
-# w_s = w_2.split(' ')
-# random_words = generate_mnemonic_words()
-# # print(random_words)
-# print(' '.join(random_words))
-seed = mnemonic_to_seed(mnemonic_words)
-print(seed)
-# mnemonic_to_seed(mnemonic_words)
-# print(get_mnemnonic_words())
