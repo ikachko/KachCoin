@@ -1,6 +1,7 @@
 import hashlib
 import secrets
 
+
 def get_mnemnonic_words():
     f = open('../mnemonic_list_english.txt', 'r')
     words = f.read().split('\n')
@@ -10,9 +11,7 @@ def get_mnemnonic_words():
 
 def mnemonic_to_seed(words):
     salt = 'mnemonic'
-    sequence = ''
-    for word in words:
-        sequence += word[:4]
+    sequence = ''.join(words)
     seed = hashlib.pbkdf2_hmac('sha512', str.encode(sequence), str.encode(salt), 2048)
     return seed.hex()
 
@@ -30,3 +29,9 @@ def generate_mnemonic_words():
     for i in range(0, len(entropy_bits), 11):
         words_seed.append(words[int(entropy_bits[i:i+11], 2)])
     return words_seed
+
+
+# h = generate_mnemonic_words()
+
+# print(h)
+# print(mnemonic_to_seed(h))
