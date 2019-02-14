@@ -13,7 +13,7 @@ def mnemonic_to_seed(words):
     salt = 'mnemonic'
     sequence = ''.join(words)
     seed = hashlib.pbkdf2_hmac('sha512', str.encode(sequence), str.encode(salt), 2048)
-    return seed.hex()
+    return seed
 
 
 def generate_mnemonic_words():
