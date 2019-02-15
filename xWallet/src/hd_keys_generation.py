@@ -4,6 +4,8 @@ import hmac
 import ecdsa
 import struct
 import codecs
+import binascii
+import base58
 
 curve_order = 347376267711948586270712955026063723559809953996921692118372752023745174652793
 
@@ -78,8 +80,8 @@ def CKDpub(M: ((int, int), bytes), i: int):
     return k_ch, I_R
 
 
-def get_master_key(seed: str) -> (int, bytes):
-    l = hmac.new(key=b'Bitcoin seed', msg=seed.encode(), digestmod=hashlib.sha512).digest()
+def get_master_key(seed: bytes) -> (int, bytes):
+    l = hmac.new(key=b'Bitcoin seed', msg=seed, digestmod=hashlib.sha512).digest()
 
     I_L = l[:(len(l)//2)]
     I_R = l[(len(l)//2):]
@@ -93,14 +95,17 @@ def get_master_key(seed: str) -> (int, bytes):
 def extend_key(version: str, depth: int, fingerprint: bytes, child_number: int, chain_code: bytes, key):
     serialized = b''
     if version == 'main_public':
-        serialized += bytes.fromhex('0488B21E')
+        serialized += binascii.unhexlify('0488B21E')
     elif version == 'main_private':
-        serialized += bytes.fromhex('0488ADE4')
+        serialized += binascii.unhexlify('0488ade4')
     elif version == 'testnet_public':
-        serialized += bytes.fromhex('043587CF')
+        serialized += binascii.unhexlify('043587CF')
     elif version == 'testnet_private':
-        serialized += bytes.fromhex('04358394')
-
+        serialized += binascii.unhexlify('04358394')
+    else:
+        print("Wrong version!")
+        print("Versions: ['main_public', 'main_private', 'testnet_public', 'testnet_private']")
+        return None
     # Depth
     serialized += struct.pack("<B", depth)
 
@@ -108,13 +113,13 @@ def extend_key(version: str, depth: int, fingerprint: bytes, child_number: int, 
     if depth != 0:
         serialized += fingerprint
     else:
-        serialized += bytes(4)
+        serialized += struct.pack("<I", 0)
 
     # Child number
     if depth != 0:
         serialized += ser_32(child_number)
     else:
-        serialized += bytes(4)
+        serialized += struct.pack("<I", 0)
 
     # Chain code
     serialized += chain_code
@@ -123,9 +128,12 @@ def extend_key(version: str, depth: int, fingerprint: bytes, child_number: int, 
     if version in ('main_public', 'testnet_public'):
         serialized += ser_p(key)
     else:
-        serialized += (bytes(1) + ser_256(key))
-
-    return serialized
+        serialized += (binascii.unhexlify('00') + ser_256(key))
+    print('----')
+    print(serialized)
+    print('----')
+    h = hashlib.sha256(hashlib.sha256(serialized).digest()).digest()
+    return base58.b58encode_check(serialized)
 
 def hash160(x_bytes):
     sha_hash = hashlib.sha256(x_bytes).digest()
@@ -135,50 +143,40 @@ def hash160(x_bytes):
     hashed_x = ripemd160_h.digest()
     return hashed_x
 
-import base58
+
+def N(params: (int, bytes)):
+    K = point(params[0])
+    c = params[1]
+    return K, c
+
+
+# Test Vector 1
 
 test_seed = '000102030405060708090a0b0c0d0e0f'
 
-test_key, test_c = get_master_key(test_seed)
+test_key, test_c = get_master_key(binascii.unhexlify(test_seed))
+test_pbk = point(test_key)
 
-version = 'main_private'
-depth = 0
-extended_key = extend_key(version, depth, b'', 0, test_c, test_key)
-serialized = base58.b58encode(extended_key.hex())
+# Chain m
 
-print(extended_key.hex())
-print(serialized.hex())
-# mnemonic_words = bip39.generate_mnemonic_words()
-# seed = bip39.mnemonic_to_seed(mnemonic_words)
-#
-# key, c = get_master_key(seed)
+m_ext_pub = extend_key('main_public', 0, b'', 0, test_c, test_pbk)
+m_ext_prv = extend_key('main_private', 0, b'', 0, test_c, test_key)
 
+# print(m_ext_pub)
+# print(m_ext_prv)
 
-# l_0 = CKDpriv((key, c), 2**31 + 3)
-# print('private key layer 0: ', l_0)
-# l_1 = CKDpriv(l_0, 2)
-# print('private key layer 1: ', l_1)
-# l_2 = CKDpriv(l_1, 5)
-# print('private key layer 2: ', l_2)
-#
-# pbk = point(key)
-# l_p_0 = CKDpub((pbk, c), 3)
-# print('public key layer 0: ', l_p_0)
-# l_p_1 = CKDpub(l_p_0, 2)
-# print('public key layer 1: ', l_p_1)
-# l_p_2 = CKDpub(l_p_1, 5)
-# print('public key layer 1: ', l_p_2)
+# Chain m/0h
 
+fingerprint_m = hash160(binascii.unhexlify(str(test_pbk[0]) + str(test_pbk[1])))[:8]
 
+# m_0h_pub, m_0h_pub_c = CKDpub((test_pbk, test_c), 1)
+m_0h_pub, m_0h_pub_c = N((test_key, test_c))
+m_0h_prk, m_0h_prk_c = CKDpriv((test_key, test_c), 1)
 
+m_0h_ext_pub = extend_key('main_public', 1, fingerprint_m, 2**31, m_0h_pub_c, m_0h_pub)
+print(m_0h_ext_pub)
 
-
-# print(len(seed))
-# k = seed[:(len(seed)//2)]
-# c = seed[(len(seed)//2):]
-#
-# print(seed)
-# layer_0 = CKDpriv(int(k, 16), bytes.fromhex(c), (2**31 + 3))
-# layer_1 = CKDpriv(layer_0[0], layer_0[1], 2)
-# key = CKDpriv(layer_1[0], layer_1[1], 5)
-# print(key)
+m_0h_ext_prk = extend_key('main_private', 1, fingerprint_m, 2**31, m_0h_prk_c, m_0h_prk)
+print(m_0h_ext_prk)
+'xpub68Gmy5EdvgibQVfPdqkBBCHxA5htiqg55crXYuXoQRKfDBFA1WEjWgP6LHhwBZeNK1VTsfTFUHCdrfp1bgwQ9xv5ski8PX9rL2dZXvgGDnw'
+'7JJikZhTDxNJQqVU4Kz2X1fCsPUYQtnH5HN96Q8F9bK83mVyip3UbKt1Urred3Gwx7DycCTLZNz5Fn6XsaTm9LUeAxNdos4jpv9ET9oPoK5CLk2nqKKBX'

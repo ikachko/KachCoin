@@ -29,9 +29,3 @@ def generate_mnemonic_words():
     for i in range(0, len(entropy_bits), 11):
         words_seed.append(words[int(entropy_bits[i:i+11], 2)])
     return words_seed
-
-
-# h = generate_mnemonic_words()
-
-# print(h)
-# print(mnemonic_to_seed(h))
