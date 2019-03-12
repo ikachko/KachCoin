@@ -39,12 +39,13 @@ To install all packages you need to run this cash system use:
 ### Using
 
 Okay, now you can use this node.
-Fitst of all run the rpc server.
+First of all run the rpc server.
+For communication of two nodes - run initializer.py at both Pictoin_1 and Pitcoin_2
 ```
 ~>> python3 initializer.py
 ```
 
-Open a new terminal window and go to the curent directory.
+Open a new terminal window and go to the current directory.
 Launch the command line interface to create you private key:
 ```
 ~>> python3 wallet_cli.py
@@ -64,7 +65,7 @@ Then broadcast transaction to the network:
 
 Okay, now you have two files: public_key and private_key.wif.
 
-Open a new terminal window and go to the curent directory.
+Open a new terminal window and go to the current directory.
 Run miner-cli to start mining.
 ```
 ~>> python3 miner_cli.py
@@ -98,16 +99,3 @@ In this mode, the following actions occured:
 /block?height=<int> - return block of given height
 
 /balance?addr=<address> - return the balance of given address
-
-
-# TestS
-
-To run my tests, go to the Kachkoin/src directory and run tests:
-
-```
-~>> python3 kachkoin_tests.py
-```
-
-When ran all tests you will see smth like this:
-
-![ScreenShot](https://i.imgur.com/ycNNwfR.png)
